@@ -1,0 +1,67 @@
+---
+title: "Patchwork"
+output: html_notebook
+editor_options: 
+  chunk_output_type: inline
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo=T, 
+  message = F, 
+  warning = F, 
+  comment = NA,
+  R.options=list(width=120), 
+  cache.rebuild=F, 
+  cache=T,
+  fig.align='center', 
+  fig.asp = .7,
+  dev = 'svg', 
+  dev.args=list(bg = 'transparent')
+)
+
+library(tidyverse); library(kableExtra)
+
+kable_df <- function(..., digits=3) {
+  kable(..., digits=digits) %>% 
+    kable_styling(full_width = F)
+}
+
+rnd = function(x, digits = 3) arm::fround(x, digits = digits)
+```
+
+
+## Getting started
+
+### Installation
+
+`Patchwork` is not yet available on cran.
+
+```{r install}
+# install.packages("devtools")
+devtools::install_github("thomasp85/patchwork")
+```
+
+Basics.  A good way to start is that you create the two separate plots.  Then you simply add them together with the `+` operator.
+
+```{r}
+library(ggplot2)
+library(patchwork)
+
+p1 <- ggplot(mtcars) + geom_point(aes(mpg, disp))
+p2 <- ggplot(mtcars) + geom_boxplot(aes(gear, disp, group = gear))
+p3 <- ggplot(mtcars) + 
+  stat_summary(aes(gear, disp, group = gear),
+               fun.y = mean,
+               geom = 'point', size=10)
+p4 <- ggplot(mtcars) + geom_smooth(aes(mpg, disp))
+
+p1 + p2
+p1 + p3
+
+p1 / p4
+(p1 | p4)
+# align
+(p1 + p4) * lims(y = c(-50, 600)) * labs(x = 'MPG')
+```
+

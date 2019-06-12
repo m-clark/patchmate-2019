@@ -1,0 +1,32 @@
+---
+title: "gganimate"
+output: html_notebook
+editor_options: 
+  chunk_output_type: inline
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo=T, 
+  message = F, 
+  warning = F, 
+  comment = NA,
+  R.options=list(width=120), 
+  cache.rebuild=F, 
+  cache=T,
+  fig.align='center', 
+  fig.asp = .7,
+  dev = 'svg', 
+  dev.args=list(bg = 'transparent')
+)
+
+library(tidyverse); library(kableExtra)
+
+kable_df <- function(..., digits=3) {
+  kable(..., digits=digits) %>% 
+    kable_styling(full_width = F)
+}
+
+rnd = function(x, digits = 3) arm::fround(x, digits = digits)
+```
+
