@@ -45,8 +45,19 @@ devtools::install_github("thomasp85/patchwork")
 Basics.  A good way to start is that you create the two separate plots.  Then you simply add them together with the `+` operator.
 
 ```{r}
-library(ggplot2)
+library(tidyverse)
 library(patchwork)
+
+
+bar = starwars %>% 
+  mutate(homeworld = fct_lump(homeworld, 7)) %>% 
+  ggplot() + 
+  geom_bar(aes(x = homeworld, fill = homeworld), show.legend = F)
+
+smooth = starwars %>% 
+  filter(!is.na(gender) & !grepl(name, pattern = 'Jabba')) %>% 
+  ggplot() + 
+  geom_smooth(aes(x=mass, y=height))
 
 p1 <- ggplot(mtcars) + geom_point(aes(mpg, disp))
 p2 <- ggplot(mtcars) + geom_boxplot(aes(gear, disp, group = gear))
@@ -65,3 +76,14 @@ p1 / p4
 (p1 + p4) * lims(y = c(-50, 600)) * labs(x = 'MPG')
 ```
 
+## Above and below
+
+
+## Grouping & Nesting
+
+## Layout
+### Sizing
+### Spacing
+### Applying to all plots
+
+* &
