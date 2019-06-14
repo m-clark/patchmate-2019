@@ -39,18 +39,40 @@ rnd = function(x, digits = 3) arm::fround(x, digits = digits)
 
 ```{r install}
 # install.packages("devtools")
-devtools::install_github("thomasp85/patchwork")
+# devtools::install_github("thomasp85/patchwork")
 ```
 
 Basics.  A good way to start is that you create the two separate plots.  Then you simply add them together with the `+` operator.
 
+
+```{r}
+# original
+# p1 <- ggplot(mtcars) + geom_point(aes(mpg, disp))
+# p2 <- ggplot(mtcars) + geom_boxplot(aes(gear, disp, group = gear))
+# p3 <- ggplot(mtcars) + 
+#   stat_summary(aes(gear, disp, group = gear),
+#                fun.y = mean,
+#                geom = 'point', size=10)
+# p4 <- ggplot(mtcars) + geom_smooth(aes(mpg, disp))
+# 
+# p1 + p2
+# p1 + p3
+# 
+# p1 / p4
+# (p1 | p4)
+# # align
+# (p1 + p4) * lims(y = c(-50, 600)) * labs(x = 'MPG')
+```
+
+
 ```{r}
 library(tidyverse)
 library(patchwork)
+load('data/starwars_df.RData')
 
-
-bar = starwars %>% 
-  mutate(homeworld = fct_lump(homeworld, 7)) %>% 
+bar = people_df %>% 
+  mutate(homeworld = fct_lump(homeworld, n = 4)) %>% 
+  drop_na(homeworld) %>% 
   ggplot() + 
   geom_bar(aes(x = homeworld, fill = homeworld), show.legend = F)
 
@@ -59,27 +81,72 @@ smooth = starwars %>%
   ggplot() + 
   geom_smooth(aes(x=mass, y=height))
 
-p1 <- ggplot(mtcars) + geom_point(aes(mpg, disp))
-p2 <- ggplot(mtcars) + geom_boxplot(aes(gear, disp, group = gear))
-p3 <- ggplot(mtcars) + 
-  stat_summary(aes(gear, disp, group = gear),
-               fun.y = mean,
-               geom = 'point', size=10)
-p4 <- ggplot(mtcars) + geom_smooth(aes(mpg, disp))
+smooth = vehicles_df %>% 
+  ggplot(aes(x=length, y=cost_in_credits)) + 
+  geom_point() +
+  geom_smooth() + 
+  geom_text_repel(aes(label = name), size=2)  # requires ggrepel
+smooth = starships_df %>% 
+  filter(length < 1000) %>% 
+  ggplot(aes(x=length, y=hyperdrive_rating)) + 
+  geom_point() +
+  geom_smooth() + 
+  geom_text_repel(aes(label = name), size=2)  # requires ggrepel
 
-p1 + p2
-p1 + p3
+scatter = species_df %>% 
+  ggplot(aes(x=average_height, y=average_lifespan)) + 
+  geom_point()
 
-p1 / p4
-(p1 | p4)
-# align
-(p1 + p4) * lims(y = c(-50, 600)) * labs(x = 'MPG')
+box = people_df %>% 
+  mutate(species = fct_lump(species, n = 2)) %>% 
+  drop_na(species) %>% 
+  ggplot(aes(x= species, y = mass)) +
+  geom_boxplot()
 ```
 
 ## Above and below
 
+Plotting side by side is the first step.  Either of these will work.
+
+
+```{r side_by_side}
+bar + smooth  # note this could be the actual underlying code
+
+bar | box
+```
+
+
+If we want below, just use a divisor.
+
+```{r top_bottom}
+bar / smooth
+
+```
+
 
 ## Grouping & Nesting
+
+```{r grouping}
+{bar + smooth} / box
+```
+
+```{r nesting}
+bar / {
+  box + {
+    scatter / 
+      smooth
+    }
+  } 
+
+  
+bar + {
+  box + 
+    scatter + 
+    plot_layout(ncol = 1)
+  } + 
+  smooth
+   
+```
 
 ## Layout
 ### Sizing
