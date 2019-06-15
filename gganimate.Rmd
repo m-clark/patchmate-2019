@@ -1,32 +1,119 @@
 ---
 title: "gganimate"
-output: html_notebook
+output: 
+  html_notebook: 
+    highlight: pygments
+    theme: sandstone
+    toc: yes
 editor_options: 
   chunk_output_type: inline
 ---
 
 ```{r setup, include=FALSE}
+# options for the knitted html document
 knitr::opts_chunk$set(
-  echo=T, 
-  message = F, 
-  warning = F, 
+  echo = T,
+  message = F,
+  warning = F,
   comment = NA,
-  R.options=list(width=120), 
-  cache.rebuild=F, 
-  cache=T,
-  fig.align='center', 
+  R.options = list(width = 120),
+  cache.rebuild = F,
+  cache = T,
+  fig.align = 'center',
   fig.asp = .7,
-  dev = 'svg', 
-  dev.args=list(bg = 'transparent')
+  dev = 'svg',
+  dev.args = list(bg = 'transparent')
 )
-
-library(tidyverse); library(kableExtra)
-
-kable_df <- function(..., digits=3) {
-  kable(..., digits=digits) %>% 
-    kable_styling(full_width = F)
-}
-
-rnd = function(x, digits = 3) arm::fround(x, digits = digits)
 ```
 
+```{r packages}
+# Packages you need
+library(tidyverse); library(gganimate)
+
+# Packages you may not have and can install
+library(ggrepel)
+```
+
+```{r data_plots}
+load('data/starwars_df.RData')  # load starwars data frames
+
+bar = people_df %>% 
+  mutate(homeworld = fct_lump(homeworld, n = 4)) %>% 
+  drop_na(homeworld) %>% 
+  ggplot() + 
+  geom_bar(aes(x = homeworld, fill = homeworld), show.legend = F)
+
+smooth = people_df %>% 
+  filter(!is.na(gender) & !grepl(name, pattern = 'Jabba')) %>% 
+  ggplot(aes(x=mass, y=height)) + 
+  geom_point() + 
+  geom_smooth()
+
+scatter = starships_df %>% 
+  ggplot(aes(x=length, y=cost_in_credits)) + 
+  geom_point(size = 5, color = '#ff5500') +
+  geom_text_repel(aes(label = name), size=6, color = 'gray50') + # requires ggrepel
+  scale_x_continuous(trans = 'log') + 
+  scale_y_continuous(trans = 'log') 
+
+box = people_df %>% 
+  mutate(species = fct_lump(species, n = 2)) %>% 
+  drop_na(species) %>% 
+  ggplot(aes(x= species, y = mass)) +
+  geom_boxplot()
+```
+
+
+
+## A starting point
+
+Note that *all animations will take at least several seconds to produce*.  To reduce this you can change the number of frames used, though this will typically make for a choppier plot. Output will be forced to the viewer instead of inline also.
+
+
+```{r first_animation}
+box + 
+  transition_states(
+    species,
+    transition_length = 2,
+    state_length = 1
+  ) +
+  enter_fade() + 
+  exit_shrink() +
+  ease_aes('sine-in-out')
+```
+
+To see what's going on, let's take it step by step. The `transition_states` function specifies how the plot information goes from one state to the next and how 'states' is defined.  In this case, our states are represented by species.   The `transition_length` is the 'relative length of the transition', which doesn't have any practical effect here. The state_length determines how long we pause (in terms of number of frames) at each state.
+
+```{r box1}
+p = box + 
+  transition_states(
+    species,
+    transition_length = 20,
+    state_length = 20
+  )
+
+animate(p, nframes = 80)
+```
+
+We have many options for how the plots enter and leave the space.  In the following, we change to `drift` to let the previous plot linger a bit.
+
+```{r box2}
+box + 
+  transition_states(
+    species,
+    transition_length = 20,
+    state_length = 20
+  ) +
+  enter_drift() 
+
+```
+
+
+Here are the options we can play with.
+
+- `enter_appear`
+- `enter_fade`
+- `enter_grow`
+- `enter_recolor`
+- `enter_fly`
+- `enter_drift`
