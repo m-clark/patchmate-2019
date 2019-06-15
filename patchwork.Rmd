@@ -1,15 +1,20 @@
 ---
 title: "Patchwork"
-output: html_notebook
+output: 
+  html_notebook: 
+    highlight: pygments
+    theme: sandstone
+    toc: yes
 editor_options: 
   chunk_output_type: inline
 ---
 
 ```{r setup, include=FALSE}
+# options for the knitted html document
 knitr::opts_chunk$set(
   echo=T, 
   message = F, 
-  warning = F, 
+  warning = F,
   comment = NA,
   R.options=list(width=120), 
   cache.rebuild=F, 
@@ -19,15 +24,14 @@ knitr::opts_chunk$set(
   dev = 'svg', 
   dev.args=list(bg = 'transparent')
 )
+```
 
-library(tidyverse); library(kableExtra)
+```{r packages}
+# Packages you need
+library(tidyverse); library(patchwork)
 
-kable_df <- function(..., digits=3) {
-  kable(..., digits=digits) %>% 
-    kable_styling(full_width = F)
-}
-
-rnd = function(x, digits = 3) arm::fround(x, digits = digits)
+# Packages you may not have and can install
+library(ggrepel)
 ```
 
 
@@ -35,40 +39,18 @@ rnd = function(x, digits = 3) arm::fround(x, digits = digits)
 
 ### Installation
 
-`Patchwork` is not yet available on cran.
+`Patchwork` is not yet available on CRAN. You'll need to install it as follows.
 
 ```{r install}
 # install.packages("devtools")
 # devtools::install_github("thomasp85/patchwork")
 ```
 
-Basics.  A good way to start is that you create the two separate plots.  Then you simply add them together with the `+` operator.
 
 
-```{r}
-# original
-# p1 <- ggplot(mtcars) + geom_point(aes(mpg, disp))
-# p2 <- ggplot(mtcars) + geom_boxplot(aes(gear, disp, group = gear))
-# p3 <- ggplot(mtcars) + 
-#   stat_summary(aes(gear, disp, group = gear),
-#                fun.y = mean,
-#                geom = 'point', size=10)
-# p4 <- ggplot(mtcars) + geom_smooth(aes(mpg, disp))
-# 
-# p1 + p2
-# p1 + p3
-# 
-# p1 / p4
-# (p1 | p4)
-# # align
-# (p1 + p4) * lims(y = c(-50, 600)) * labs(x = 'MPG')
-```
 
-
-```{r}
-library(tidyverse)
-library(patchwork)
-load('data/starwars_df.RData')
+```{r basic_plots}
+load('data/starwars_df.RData')  # load starwars data frames
 
 bar = people_df %>% 
   mutate(homeworld = fct_lump(homeworld, n = 4)) %>% 
@@ -76,26 +58,16 @@ bar = people_df %>%
   ggplot() + 
   geom_bar(aes(x = homeworld, fill = homeworld), show.legend = F)
 
-smooth = starwars %>% 
+smooth = people_df %>% 
   filter(!is.na(gender) & !grepl(name, pattern = 'Jabba')) %>% 
-  ggplot() + 
-  geom_smooth(aes(x=mass, y=height))
+  ggplot(aes(x=mass, y=height)) + 
+  geom_point() + 
+  geom_smooth()
 
-smooth = vehicles_df %>% 
+scatter = vehicles_df %>% 
   ggplot(aes(x=length, y=cost_in_credits)) + 
-  geom_point() +
-  geom_smooth() + 
-  geom_text_repel(aes(label = name), size=2)  # requires ggrepel
-smooth = starships_df %>% 
-  filter(length < 1000) %>% 
-  ggplot(aes(x=length, y=hyperdrive_rating)) + 
-  geom_point() +
-  geom_smooth() + 
-  geom_text_repel(aes(label = name), size=2)  # requires ggrepel
-
-scatter = species_df %>% 
-  ggplot(aes(x=average_height, y=average_lifespan)) + 
-  geom_point()
+  geom_point(size = 10, color = '#ff5500') +
+  geom_text_repel(aes(label = name), size=6, color = 'gray50')  # requires ggrepel
 
 box = people_df %>% 
   mutate(species = fct_lump(species, n = 2)) %>% 
@@ -104,31 +76,44 @@ box = people_df %>%
   geom_boxplot()
 ```
 
-## Above and below
+## Above & Below
 
-Plotting side by side is the first step.  Either of these will work.
+Basics.  A good way to start is that you create the two separate plots and plotting side by side is the first step.  Either of these will work.
 
 
 ```{r side_by_side}
-bar + smooth  # note this could be the actual underlying code
+bar + smooth  # note this could be the actual underlying code of the plots
+```
 
+```{r side_by_side2}
 bar | box
 ```
 
 
-If we want below, just use a divisor.
+
+If we want the second plot below, you can just use a divisor.
 
 ```{r top_bottom}
 bar / smooth
-
 ```
 
 
 ## Grouping & Nesting
 
+If we have multiple plots, we may want to group them a certain way.
+
 ```{r grouping}
-{bar + smooth} / box
+(bar + smooth) / box
 ```
+
+This is what it would look like if we hadn't nested. Operations take similar
+mathematical precedence.
+
+```{r grouping2}
+bar + smooth / box
+```
+
+We can take this further to use *nesting* to further enhance the plot.
 
 ```{r nesting}
 bar / {
@@ -136,21 +121,121 @@ bar / {
     scatter / 
       smooth
     }
-  } 
+  }
+```
 
-  
+## Layout
+
+Layouts provide more customization over the look.
+
+```{r layout1}
+box + smooth + bar + scatter +
+  plot_layout(ncol = 2)
+```
+
+We have additional options.
+
+```{r layout2}
+box + 
+  smooth + 
+  bar + 
+  scatter +
+  plot_layout(
+    ncol = 2,            # 2 columns
+    byrow = T            # enter plots by row
+  )
+```
+
+
+
+We can also use it with nesting.
+
+```{r layout3}
 bar + {
   box + 
     scatter + 
     plot_layout(ncol = 1)
   } + 
   smooth
-   
 ```
 
-## Layout
 ### Sizing
-### Spacing
-### Applying to all plots
 
-* &
+We can alter relative sizes of plots.
+
+```{r sizing}
+box + 
+  smooth + 
+  bar + 
+  scatter +
+  plot_layout(
+    ncol = 2,            # 2 columns
+    byrow = T,           # enter plots by row
+    widths = c(1,2),     # relative column widths
+    heights = c(1,1.5)   # relative row heights
+  )
+```
+
+### Spacing
+
+Add some space between plots. This is all it does at present.
+
+```{r spacing}
+box + 
+  plot_spacer() +
+  smooth 
+```
+### Applying modifications to all plots
+
+You may have some layouts or themes you'd like to apply to each plot.  First we'll start with the usual approach.
+
+
+```{r apply_theme1}
+box + smooth + bar + theme_bw()
+```
+
+We could do the following, but it's tedious.
+
+```{r apply_theme2}
+box + theme_bw() + smooth + theme_bw() + bar + theme_bw()
+```
+
+Instead, we can just nest/group the plots and use `*` to apply the theme to all. This is much easier.  
+
+```{r apply_theme3}
+(box + smooth + bar) * theme_bw()
+```
+
+Using `&` will apply through all levels of nesting.
+
+```{r apply_theme4}
+box / {
+  smooth + 
+    bar
+  } * theme_bw()
+
+
+box / {
+  smooth + 
+    bar
+  } & theme_bw()
+```
+
+## Annotation
+
+Annotating applies only on the 'top-level' plot.
+
+```{r annotation}
+# plot annotation must be applied to the whole set of plots. I nested everything
+# so that I could also use the `&` operator for a common theme.
+{box / {
+  smooth + 
+    bar
+  }   & 
+  theme_bw()
+  } + 
+  plot_annotation(title = 'Star Wars Plots', 
+                  subtitle = 'Shenanigans', 
+                  theme = theme(title = element_text(size= 24))) 
+```
+

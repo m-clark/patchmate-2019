@@ -26,48 +26,51 @@
 #   set_names(name, url)
 # }
 
-
+# this function assumes tidyverse loaded
 get_all_results = function(fn) {
+  
+  # initial results ---------------------------------------------------------
+  
+  fn_name = deparse(substitute(fn)) 
   result_list = list()
   result_list[[1]] = fn(parse_result = T)
   
-  # if no additional results
-  if (is.null(getElement(result_list[[1]], "next"))) {
-    init = map(result_list, function(x) x$results)
-    init = map_depth(init, 3, function(x) ifelse(length(x) > 1, paste0(x, collapse = ' '), x))
-    init = map_depth(init, 2, as_tibble)
+  
+  # more results ------------------------------------------------------------
+  
+  more = getElement(result_list[[1]], "next")
+  
+  if (!is_null(more)) {
+    page = as.integer(str_sub(more, start = -1))
     
-    result = bind_rows(map(init, bind_rows))
-  } else {
-    page = as.integer(str_sub(getElement(result_list[[1]], "next"), start = -1))
-    
-    # page should be null if nothing left
-    while(length(page)) {
-      if (page == 2) {
-        current_result = fn(getElement(result_list[[1]], "next"), parse_result = TRUE)
-      } else {
-        last_result = result_list[[page - 1]]
-        current_result = fn(getElement(last_result, "next"), parse_result = TRUE)
-      }
+    # page should be empty if nothing left
+    while(!is_empty(page)) {
+      current_result = fn(getElement(result_list[[page - 1]], "next"), parse_result = TRUE)
       
       result_list[[page]] = current_result
       
       page = as.integer(str_sub(getElement(current_result, "next"), start = -1))
-      # get the actual results that are desired
-      init = map(result_list, function(x) x$results)
-      
-      # to deal with multiple entry columns (flatten won't work because they aren't a list)
-      init = map_depth(init, 3, function(x) ifelse(length(x) > 1, paste0(x, collapse = ' '),
-                                                   ifelse(is.null(x), NA, x)))
-      
-      # make a data frame and bind together
-      init = map_depth(init, 2, as_tibble)
-      result = bind_rows(map(init, bind_rows))
     }
   }
   
   
-  # more misc cleanup
+  # create data frame -------------------------------------------------------
+  
+  # get the actual results that are desired
+  init = map(result_list, function(x) x$results)
+  
+  # to deal with multiple entry columns (flatten won't work because they aren't a list)
+  init = map_depth(init, 3, function(x) ifelse(length(x) > 1, paste0(x, collapse = ' '),
+                                               ifelse(is.null(x), NA, x)))
+  
+  # make a data frame and bind together
+  init = map_depth(init, 2, as_tibble)
+  
+  result = bind_rows(map(init, bind_rows))
+  
+  
+  # more misc cleanup -------------------------------------------------------
+  
   nams = names(result)
   
   result = result %>% 
@@ -79,8 +82,10 @@ get_all_results = function(fn) {
   
   # specific fixes
   
+  # films none to do
+  
   # people
-  if (any(result$name == 'Luke Skywalker', na.rm = T)) {
+  if (fn_name == 'get_all_people') {
     result = result %>% 
       mutate(
         birth_year = str_extract_all(birth_year, '[0-9]+'),
@@ -89,44 +94,44 @@ get_all_results = function(fn) {
       )
   }
   
-  # films none
-  
   # planets
-  if (any(result$name == 'Tatooine', na.rm = T)) {
+  if (fn_name == 'get_all_planets') {
     result = result %>% 
       mutate_at(vars(rotation_period, orbital_period, diameter, surface_water, population),
                 as.numeric) %>% 
       mutate(gravity = str_extract_all(gravity, '[0-9]+'))
   }
   
-  # starships (fix consumables some other time)
-  if (any(result$name == 'Star Destroyer' | result$name == 'Sand Crawler', na.rm = T)) {
+  # starships & vehicles (fix consumables some other time)
+  if (grepl(fn_name, pattern = 'starship|vehicle')) {
     result = result %>% 
-      mutate_at(vars(cost_in_credits, max_atmosphering_speed, crew, passengers, 
-                     cargo_capacity),
-                as.numeric) %>% 
+      mutate_at(
+        vars(
+          cost_in_credits, 
+          max_atmosphering_speed, 
+          crew, 
+          passengers, 
+          cargo_capacity),
+        as.numeric
+      ) %>% 
+      mutate_at(vars(contains('class')), tolower) %>% 
       mutate(length = str_remove_all(length, ','),   # fun!
              length = as.numeric(length))
     
-    if (any(result$name == 'Star Destroyer', na.rm = T)) {
+    if (fn_name == 'get_all_starships') {
       result = result %>% 
-        mutate(starship_class = tolower(starship_class)) %>% 
         mutate_at(vars(hyperdrive_rating, MGLT), as.numeric)  # not in vehicles
     }
-    
-    if (any(result$name == 'Sand Crawler', na.rm = T)) {
-      result = result %>% 
-        mutate(vehicle_class = tolower(vehicle_class))
-    }
   }
-
   
   # species
-  if (any(result$name == 'Wookiee', na.rm = T)) {
+  if (fn_name == 'get_all_species') {
     result = result %>% 
       mutate(
         average_height = as.numeric(average_height),
-        average_lifespan = ifelse(average_lifespan == 'indefinite', NA, average_lifespan),
+        average_lifespan = ifelse(average_lifespan == 'indefinite', 
+                                  NA, 
+                                  average_lifespan),
         average_lifespan = as.numeric(average_lifespan)
       )
   }
