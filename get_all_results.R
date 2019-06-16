@@ -82,7 +82,13 @@ get_all_results = function(fn) {
   
   # specific fixes
   
-  # films none to do
+  # films
+  if (fn_name == 'get_all_films') {
+    result = result %>% 
+      mutate(
+        release_date = lubridate::ymd(release_date)
+      )
+  }
   
   # people
   if (fn_name == 'get_all_people') {

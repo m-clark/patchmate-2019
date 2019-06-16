@@ -12,17 +12,17 @@ editor_options:
 ```{r setup, include=FALSE}
 # options for the knitted html document
 knitr::opts_chunk$set(
-  echo=T, 
-  message = F, 
+  echo = T,
+  message = F,
   warning = F,
   comment = NA,
-  R.options=list(width=120), 
-  cache.rebuild=F, 
-  cache=T,
-  fig.align='center', 
+  R.options = list(width = 120),
+  cache.rebuild = F,
+  cache = T,
+  fig.align = 'center',
   fig.asp = .7,
-  dev = 'svg', 
-  dev.args=list(bg = 'transparent')
+  dev = 'svg',
+  dev.args = list(bg = 'transparent')
 )
 ```
 

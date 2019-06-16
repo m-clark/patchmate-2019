@@ -1,24 +1,30 @@
 ---
 title: "gganimate"
-output: 
-  html_notebook: 
+output:
+  html_notebook:
     highlight: pygments
     theme: sandstone
     toc: yes
-editor_options: 
-  chunk_output_type: inline
+  html_document:
+    highlight: pygments
+    theme: sandstone
+    df_print: paged
+    toc: yes
+editor_options:
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
 # options for the knitted html document
 knitr::opts_chunk$set(
   echo = T,
+  eval = F,
   message = F,
   warning = F,
   comment = NA,
   R.options = list(width = 120),
   cache.rebuild = F,
-  cache = T,
+  cache = F,
   fig.align = 'center',
   fig.asp = .7,
   dev = 'svg',
@@ -26,48 +32,102 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r packages}
+```{r packages, eval=TRUE}
 # Packages you need
 library(tidyverse); library(gganimate)
 
 # Packages you may not have and can install
 library(ggrepel)
+library(gapminder)
 ```
 
-```{r data_plots}
+```{r sw_plots, eval=TRUE}
 load('data/starwars_df.RData')  # load starwars data frames
 
-bar = people_df %>% 
+bar_sw = people_df %>% 
   mutate(homeworld = fct_lump(homeworld, n = 4)) %>% 
   drop_na(homeworld) %>% 
   ggplot() + 
   geom_bar(aes(x = homeworld, fill = homeworld), show.legend = F)
 
-smooth = people_df %>% 
+smooth_sw = people_df %>% 
   filter(!is.na(gender) & !grepl(name, pattern = 'Jabba')) %>% 
   ggplot(aes(x=mass, y=height)) + 
   geom_point() + 
   geom_smooth()
 
-scatter = starships_df %>% 
-  ggplot(aes(x=length, y=cost_in_credits)) + 
-  geom_point(size = 5, color = '#ff5500') +
+scatter_sw = starships_df %>% 
+  arrange(length) %>% 
+  ggplot(aes(x = length, y = cost_in_credits)) + 
+  geom_point(aes(color = log(cost_in_credits*length)), size = 5, show.legend = F) +
   geom_text_repel(aes(label = name), size=6, color = 'gray50') + # requires ggrepel
   scale_x_continuous(trans = 'log') + 
-  scale_y_continuous(trans = 'log') 
+  scale_y_continuous(trans = 'log') +
+  scale_color_viridis_c()
 
-box = people_df %>% 
+box_sw = people_df %>% 
   mutate(species = fct_lump(species, n = 2)) %>% 
   drop_na(species) %>% 
   ggplot(aes(x= species, y = mass)) +
   geom_boxplot()
 ```
 
+```{r gm_plots, eval=TRUE}
+load('data/starwars_df.RData')  # load starwars data frames
+
+continent = gapminder %>% 
+  group_by(continent) %>% 
+  summarise(lifeExp = mean(lifeExp),
+            gdpPercap = mean(gdpPercap))
+
+country = gapminder %>% 
+  group_by(continent, country) %>% 
+  summarise(lifeExp = mean(lifeExp),
+            gdpPercap = mean(gdpPercap))
+
+year = gapminder %>% 
+  group_by(year) %>% 
+  summarise(lifeExp = mean(lifeExp),
+            gdpPercap = mean(gdpPercap))
+
+gapminder_std = gapminder %>% 
+  group_by(year) %>% 
+  mutate(lifeExp = scale(lifeExp)[,1],
+         gdpPercap = scale(gdpPercap)[,1]) 
+
+bar = gapminder %>% 
+  group_by(continent) %>% 
+  summarise(lifeExp = mean(lifeExp)) %>% 
+  ggplot() + 
+  geom_col(aes(x = continent, y = lifeExp, fill = continent), show.legend = F)
+
+smooth = gapminder %>% 
+  ggplot(aes(x = gdpPercap, y = lifeExp)) + 
+  geom_point() + 
+  geom_smooth() +
+  scale_x_continuous(trans = 'log') +
+  scale_y_continuous(trans = 'log') 
+
+scatter = country %>% 
+  ggplot(aes(x = gdpPercap, y = lifeExp)) + 
+  geom_point(aes(color = gdpPercap*lifeExp), show.legend = F) +
+  geom_text_repel(aes(label = country), size=2) +
+  scale_x_continuous(trans = 'log') + 
+  scale_y_continuous(trans = 'log') +
+  scale_color_viridis_c()
+
+s = gapminder %>%
+  group_by(continent, country) %>%
+  summarise(lifeExp = mean(lifeExp)) %>%
+  ggplot() + 
+  geom_boxplot(aes(x = continent, y = lifeExp, fill = continent), show.legend = F)
+```
+
 
 
 ## A starting point
 
-Note that *all animations will take at least several seconds to produce*.  To reduce this you can change the number of frames used, though this will typically make for a choppier plot. Output will be forced to the viewer instead of inline also.
+Note that *all animations will take at least several seconds to produce*.  To reduce this you can change the number of frames used, though this will typically make for a choppier plot. Note that output will be forced to the viewer instead of inline also.
 
 
 ```{r first_animation}
@@ -82,38 +142,308 @@ box +
   ease_aes('sine-in-out')
 ```
 
-To see what's going on, let's take it step by step. The `transition_states` function specifies how the plot information goes from one state to the next and how 'states' is defined.  In this case, our states are represented by species.   The `transition_length` is the 'relative length of the transition', which doesn't have any practical effect here. The state_length determines how long we pause (in terms of number of frames) at each state.
+To see what's going on, let's take it step by step. The `transition_states` function specifies how the plot information goes from one state to the next and how 'states' is defined.  In this case, our states are represented by species.   The `transition_length` is the 'relative length of the transition', but can be as many values as there are states. The `state_length` determines how long we pause (in terms of number of frames) at each state.  We'll talk about the others as we go along.
+
+
+Typically you may want to assign the plot to an object so that you can use the `animate` function for more control.
 
 ```{r box1}
 p = box + 
   transition_states(
     species,
-    transition_length = 20,
-    state_length = 20
-  )
+    transition_length = c(1, 10, 5), 
+    state_length = 2
+  ) +
+  enter_fade() + 
+  exit_shrink() +
+  ease_aes('sine-in-out')
 
-animate(p, nframes = 80)
+animate(p, nframes = 50)
 ```
 
-We have many options for how the plots enter and leave the space.  In the following, we change to `drift` to let the previous plot linger a bit.
 
-```{r box2}
-box + 
+
+## Transitions
+
+There are many **transitions**, though you'll probably use `_states` and `_reveal`.  The former works on some categorical variable as we saw before, while the latter works on an ordered (numeric) variable.  A variant of it is `transition_time`, which can work with an actual date variable.  In the following, text will be revealed by release date. 
+
+```{r transition_time}
+film_timeline = films_df %>%  
+  ggplot(aes(x = release_date, y = 0)) + 
+  geom_text(aes(label = title, color = title), 
+            position = position_jitter(width = 0.1, height = .1),
+            size = 5,
+            show.legend = F) +
+  labs(y = '') + 
+  theme_bw() +
+  theme(axis.text.y = element_blank()) 
+
+p = film_timeline + 
+  transition_time(release_date) 
+
+animate(p, end_pause = 25)
+```
+
+See how this contrasts with `transition_reveal`
+
+```{r reveal_vs_time}
+p = film_timeline + 
+  transition_reveal(release_date) 
+
+animate(p, nframes=50)
+```
+
+We can use the `glue` package to insert text into the titles.  Each type of transition comes with named objects we can use.  With `transition_time`, the unique value is `frame_time`, but others are generically available.
+
+```{r glue}
+p = film_timeline + 
+  transition_time(release_date) +
+  ggtitle('Now showing {frame_time}',
+          subtitle = 'Frame {frame} of {nframes}')
+
+animate(p, nframes=50)
+```
+
+
+Another that might come in handy is revealing the plot by the layers used to construct it.  With the following we introduce some redundancy to take advantage of this.
+
+```{r transition_layers}
+mass_height = people_df %>% 
+  filter(!is.na(gender) & !grepl(name, pattern = 'Jabba')) %>% 
+  ggplot(aes(x=mass, y=height)) + 
+  geom_point(alpha = .5) + 
+  geom_point(aes(color = species == 'Human'), show.legend = F) + 
+  geom_smooth(se = T, color = NA) +
+  geom_smooth(se = F, color = '#00aaff') +
+  geom_smooth(se = F, method = 'lm', color = '#ff5500') +
+  theme_void()
+  
+
+p = mass_height +
+  transition_layers()
+
+animate(p, nframes = 50)
+```
+
+The list of transitions includes:
+
+- `transition_components`
+- `transition_events`
+- `transition_filter`
+- `transition_layers`
+- `transition_manual`
+- `transition_null`
+- `transition_reveal`
+- `transition_states`
+- `transition_time`
+
+## Shadows
+
+Shadows can add a nice effect.
+
+```{r}
+mass_height = people_df %>% 
+  filter(!is.na(gender) & !grepl(name, pattern = 'Jabba')) %>% 
+  ggplot(aes(x=mass, y=height)) + 
+  # geom_point(aes(color = species == 'Human'), show.legend = F) + 
+  geom_smooth(se = F, color = '#00aaff') 
+
+p = mass_height +
+  transition_reveal(seq_along(mass)) 
+
+animate(p, nframes = 50)
+```
+
+
+## Enter/Exit
+
+We have many options for how the plots enter and leave the space.  In the following, we use `enter_drift` to let the previous plot linger a bit.
+
+```{r enter}
+p = box + 
   transition_states(
-    species,
-    transition_length = 20,
-    state_length = 20
+    species
   ) +
   enter_drift() 
 
+anim(p, nframes = 50)
 ```
 
+```{r exit}
+p = bar + 
+  transition_states(
+    homeworld
+  ) +
+  enter_grow() +
+  exit_shrink()
 
-Here are the options we can play with.
+animate(p, nframes = 50)
+```
 
+Here are the options we can play with.  They have a corresponding `exit_*` function.
+
+- `enter_manual`
 - `enter_appear`
 - `enter_fade`
 - `enter_grow`
+- `enter_recolour`
 - `enter_recolor`
 - `enter_fly`
 - `enter_drift`
+- `enter_reset`
+
+- `exit_manual`
+- `exit_disappear`
+- `exit_fade`
+- `exit_shrink`
+- `exit_recolour`
+- `exit_recolor`
+- `exit_fly`
+- `exit_drift`
+- `exit_reset`
+
+
+## Easing
+
+With easing we can define the velocity with which aesthetics change during an animation.  This is done with `ease_aes`.  By default the transition is 'linear', but let's see some others. 
+
+```{r ease}
+mass_height = people_df %>% 
+  mutate(Human = factor(species == 'Human', labels = c('Other', 'Human'))) %>% 
+  filter(!is.na(gender) & !grepl(name, pattern = 'Jabba')) %>% 
+  drop_na(Human, mass, height) %>% # to remove warnings
+  ggplot(aes(x = mass, y = height)) + 
+  geom_point(aes(color = Human, group = 1), show.legend = T)
+
+p = mass_height +
+  transition_states(Human, transition_length = 5, state_length = 1) +
+  enter_fade() +
+  exit_fade() +
+  ease_aes(y = 'bounce-in-out')
+
+animate(p, nframes =  50)
+```
+
+
+
+Easing functions:
+
+- `quadratic` Models a power-of-2 function
+- `cubic` Models a power-of-3 function
+- `quartic` Models a power-of-4 function
+- `quintic` Models a power-of-5 function
+- `sine` Models a sine function
+- `circular` Models a pi/2 circle arc
+- `exponential` Models an exponential function
+- `elastic` Models an elastic release of energy
+- `back` Models a pullback and relase
+- `bounce` Models the bouncing of a ball
+
+
+Modifiers 
+
+-`in` The easing function is applied as-is
+-`out` The easing function is applied in reverse
+-`in-out` The first half of the transition it is applied as-is, while in the last half it is reversed
+
+## Animate options
+
+When using animate, you have some options you'll commonly want to alter that will affect the animation appearance.  Here are the ones you'll probably want to fiddle with most.
+
+- `nframes`	The number of frames to render (default 100)
+- `fps`	The framerate of the animation in frames/sec (default 10)
+- `duration`	The length of the animation in seconds (unset by default)
+- `start/end_pause` Number of times to repeat the first and last frame in the animation 
+- `rewind`	Should the animation roll back in the end (default FALSE)
+
+## Common issues
+
+#### Simple breakage
+
+Often you'll just get an error.  This means you'll need to read the documentation correctly, as you likely have not used the correct variable type, and in general have not provided the function what it expects.
+
+As an example, let's try to use `transition_reveal` for a categorical.
+
+```{r borked, error=TRUE}
+mass_height = people_df %>% 
+  mutate(Human = factor(species == 'Human', labels = c('Other', 'Human'))) %>% 
+  filter(!is.na(gender) & !grepl(name, pattern = 'Jabba')) %>% 
+  drop_na(Human, mass, height) %>% # to remove warnings
+  ggplot(aes(x = mass, y = height)) + 
+  geom_point(aes(color = Human), show.legend = T)
+
+mass_height + 
+  transition_reveal(Human)
+```
+
+It states clearly what's needed for this transition, and we didn't provide it.
+
+
+
+#### But it worked before!
+
+Sometimes what *should* work apparently does not.  For example look at the following, which is our easing example from before.  This time, no bounce!
+
+```{r broken_bounce}
+people_df %>% 
+  mutate(Human = factor(species == 'Human', labels = c('Other', 'Human'))) %>% 
+  filter(!is.na(gender) & !grepl(name, pattern = 'Jabba')) %>% 
+  drop_na(Human, mass, height) %>% # to remove warnings
+  ggplot(aes(x = mass, y = height)) + 
+  geom_point(aes(color = Human), show.legend = T)
+
+p = mass_height +
+  transition_states(Human, transition_length = 5, state_length = 1) +
+  enter_fade() +
+  exit_fade() +
+  ease_aes(y = 'bounce-in-out')
+
+animate(p, nframes =  50)
+```
+
+Why does this happen? Because behind the scenes some sort of grouping is being done on the data. By specifying the color argument, we only have the two groups, while we want each individual point to bounce.  If we add a `group = 1` aesthetic as we did the first time, we can get what we want. As stated in the documentation, the group aesthetic defines how the data in a layer is matched across the animation.
+
+
+```{r fixed_bounce}
+p = people_df %>% 
+  mutate(Human = factor(species == 'Human', labels = c('Other', 'Human'))) %>% 
+  filter(!is.na(gender) & !grepl(name, pattern = 'Jabba')) %>% 
+  drop_na(Human, mass, height) %>% # to remove warnings
+  ggplot(aes(x = mass, y = height)) + 
+  geom_point(aes(color = Human, group = 1), show.legend = T)
+
+p = mass_height +
+  transition_states(Human, transition_length = 5, state_length = 1) +
+  enter_fade() +
+  exit_fade() +
+  ease_aes(y = 'elastic-in-out')
+
+animate(p, nframes = 50)
+
+```
+
+
+#### Wrong transition to convey the effect
+
+The previous plot makes it look as though humans are transitioning to/from non-humans. In this case, it would be more appropriate to not have such a transition ease. We can still use other effects, like enter/exit, if we like.
+
+```{r right_transition}
+p = people_df %>% 
+  mutate(Human = factor(species == 'Human', labels = c('Other', 'Human'))) %>% 
+  filter(!is.na(gender) & !grepl(name, pattern = 'Jabba')) %>% 
+  drop_na(Human, mass, height) %>% # to remove warnings
+  ggplot(aes(x = mass, y = height)) + 
+  geom_point(aes(color = Human, group = Human), show.legend = T)
+
+p = p +
+  transition_states(Human, transition_length = 2, state_length = 1) + 
+  enter_fade() +
+  exit_drift(x_mod = 0, y_mod = 100)
+
+animate(p, nframes = 50)
+```
+
+
+## Summary
+
+Animation is a great way to enhance a plot and tell a data driven story.  It can definitely be overkill for sm

@@ -58,6 +58,148 @@ if (!!window.navigator.userAgent.match("MSIE 8")) {
 !function(a){"use strict";a.matchMedia=a.matchMedia||function(a){var b,c=a.documentElement,d=c.firstElementChild||c.firstChild,e=a.createElement("body"),f=a.createElement("div");return f.id="mq-test-1",f.style.cssText="position:absolute;top:-100em",e.style.background="none",e.appendChild(f),function(a){return f.innerHTML='&shy;<style media="'+a+'"> #mq-test-1 { width: 42px; }</style>',c.insertBefore(e,d),b=42===f.offsetWidth,c.removeChild(e),{matches:b,media:a}}}(a.document)}(this),function(a){"use strict";function b(){u(!0)}var c={};a.respond=c,c.update=function(){};var d=[],e=function(){var b=!1;try{b=new a.XMLHttpRequest}catch(c){b=new a.ActiveXObject("Microsoft.XMLHTTP")}return function(){return b}}(),f=function(a,b){var c=e();c&&(c.open("GET",a,!0),c.onreadystatechange=function(){4!==c.readyState||200!==c.status&&304!==c.status||b(c.responseText)},4!==c.readyState&&c.send(null))};if(c.ajax=f,c.queue=d,c.regex={media:/@media[^\{]+\{([^\{\}]*\{[^\}\{]*\})+/gi,keyframes:/@(?:\-(?:o|moz|webkit)\-)?keyframes[^\{]+\{(?:[^\{\}]*\{[^\}\{]*\})+[^\}]*\}/gi,urls:/(url\()['"]?([^\/\)'"][^:\)'"]+)['"]?(\))/g,findStyles:/@media *([^\{]+)\{([\S\s]+?)$/,only:/(only\s+)?([a-zA-Z]+)\s?/,minw:/\([\s]*min\-width\s*:[\s]*([\s]*[0-9\.]+)(px|em)[\s]*\)/,maxw:/\([\s]*max\-width\s*:[\s]*([\s]*[0-9\.]+)(px|em)[\s]*\)/},c.mediaQueriesSupported=a.matchMedia&&null!==a.matchMedia("only all")&&a.matchMedia("only all").matches,!c.mediaQueriesSupported){var g,h,i,j=a.document,k=j.documentElement,l=[],m=[],n=[],o={},p=30,q=j.getElementsByTagName("head")[0]||k,r=j.getElementsByTagName("base")[0],s=q.getElementsByTagName("link"),t=function(){var a,b=j.createElement("div"),c=j.body,d=k.style.fontSize,e=c&&c.style.fontSize,f=!1;return b.style.cssText="position:absolute;font-size:1em;width:1em",c||(c=f=j.createElement("body"),c.style.background="none"),k.style.fontSize="100%",c.style.fontSize="100%",c.appendChild(b),f&&k.insertBefore(c,k.firstChild),a=b.offsetWidth,f?k.removeChild(c):c.removeChild(b),k.style.fontSize=d,e&&(c.style.fontSize=e),a=i=parseFloat(a)},u=function(b){var c="clientWidth",d=k[c],e="CSS1Compat"===j.compatMode&&d||j.body[c]||d,f={},o=s[s.length-1],r=(new Date).getTime();if(b&&g&&p>r-g)return a.clearTimeout(h),h=a.setTimeout(u,p),void 0;g=r;for(var v in l)if(l.hasOwnProperty(v)){var w=l[v],x=w.minw,y=w.maxw,z=null===x,A=null===y,B="em";x&&(x=parseFloat(x)*(x.indexOf(B)>-1?i||t():1)),y&&(y=parseFloat(y)*(y.indexOf(B)>-1?i||t():1)),w.hasquery&&(z&&A||!(z||e>=x)||!(A||y>=e))||(f[w.media]||(f[w.media]=[]),f[w.media].push(m[w.rules]))}for(var C in n)n.hasOwnProperty(C)&&n[C]&&n[C].parentNode===q&&q.removeChild(n[C]);n.length=0;for(var D in f)if(f.hasOwnProperty(D)){var E=j.createElement("style"),F=f[D].join("\n");E.type="text/css",E.media=D,q.insertBefore(E,o.nextSibling),E.styleSheet?E.styleSheet.cssText=F:E.appendChild(j.createTextNode(F)),n.push(E)}},v=function(a,b,d){var e=a.replace(c.regex.keyframes,"").match(c.regex.media),f=e&&e.length||0;b=b.substring(0,b.lastIndexOf("/"));var g=function(a){return a.replace(c.regex.urls,"$1"+b+"$2$3")},h=!f&&d;b.length&&(b+="/"),h&&(f=1);for(var i=0;f>i;i++){var j,k,n,o;h?(j=d,m.push(g(a))):(j=e[i].match(c.regex.findStyles)&&RegExp.$1,m.push(RegExp.$2&&g(RegExp.$2))),n=j.split(","),o=n.length;for(var p=0;o>p;p++)k=n[p],l.push({media:k.split("(")[0].match(c.regex.only)&&RegExp.$2||"all",rules:m.length-1,hasquery:k.indexOf("(")>-1,minw:k.match(c.regex.minw)&&parseFloat(RegExp.$1)+(RegExp.$2||""),maxw:k.match(c.regex.maxw)&&parseFloat(RegExp.$1)+(RegExp.$2||"")})}u()},w=function(){if(d.length){var b=d.shift();f(b.href,function(c){v(c,b.href,b.media),o[b.href]=!0,a.setTimeout(function(){w()},0)})}},x=function(){for(var b=0;b<s.length;b++){var c=s[b],e=c.href,f=c.media,g=c.rel&&"stylesheet"===c.rel.toLowerCase();e&&g&&!o[e]&&(c.styleSheet&&c.styleSheet.rawCssText?(v(c.styleSheet.rawCssText,e,f),o[e]=!0):(!/^([a-zA-Z:]*\/\/)/.test(e)&&!r||e.replace(RegExp.$1,"").split("/")[0]===a.location.host)&&("//"===e.substring(0,2)&&(e=a.location.protocol+e),d.push({href:e,media:f})))}w()};x(),c.update=x,c.getEmValue=t,a.addEventListener?a.addEventListener("resize",b,!1):a.attachEvent&&a.attachEvent("onresize",b)}}(this);
 };
 </script>
+<script>
+
+/**
+ * jQuery Plugin: Sticky Tabs
+ *
+ * @author Aidan Lister <aidan@php.net>
+ * adapted by Ruben Arslan to activate parent tabs too
+ * http://www.aidanlister.com/2014/03/persisting-the-tab-state-in-bootstrap/
+ */
+(function($) {
+  "use strict";
+  $.fn.rmarkdownStickyTabs = function() {
+    var context = this;
+    // Show the tab corresponding with the hash in the URL, or the first tab
+    var showStuffFromHash = function() {
+      var hash = window.location.hash;
+      var selector = hash ? 'a[href="' + hash + '"]' : 'li.active > a';
+      var $selector = $(selector, context);
+      if($selector.data('toggle') === "tab") {
+        $selector.tab('show');
+        // walk up the ancestors of this element, show any hidden tabs
+        $selector.parents('.section.tabset').each(function(i, elm) {
+          var link = $('a[href="#' + $(elm).attr('id') + '"]');
+          if(link.data('toggle') === "tab") {
+            link.tab("show");
+          }
+        });
+      }
+    };
+
+
+    // Set the correct tab when the page loads
+    showStuffFromHash(context);
+
+    // Set the correct tab when a user uses their back/forward button
+    $(window).on('hashchange', function() {
+      showStuffFromHash(context);
+    });
+
+    // Change the URL when tabs are clicked
+    $('a', context).on('click', function(e) {
+      history.pushState(null, null, this.href);
+      showStuffFromHash(context);
+    });
+
+    return this;
+  };
+}(jQuery));
+
+window.buildTabsets = function(tocID) {
+
+  // build a tabset from a section div with the .tabset class
+  function buildTabset(tabset) {
+
+    // check for fade and pills options
+    var fade = tabset.hasClass("tabset-fade");
+    var pills = tabset.hasClass("tabset-pills");
+    var navClass = pills ? "nav-pills" : "nav-tabs";
+
+    // determine the heading level of the tabset and tabs
+    var match = tabset.attr('class').match(/level(\d) /);
+    if (match === null)
+      return;
+    var tabsetLevel = Number(match[1]);
+    var tabLevel = tabsetLevel + 1;
+
+    // find all subheadings immediately below
+    var tabs = tabset.find("div.section.level" + tabLevel);
+    if (!tabs.length)
+      return;
+
+    // create tablist and tab-content elements
+    var tabList = $('<ul class="nav ' + navClass + '" role="tablist"></ul>');
+    $(tabs[0]).before(tabList);
+    var tabContent = $('<div class="tab-content"></div>');
+    $(tabs[0]).before(tabContent);
+
+    // build the tabset
+    var activeTab = 0;
+    tabs.each(function(i) {
+
+      // get the tab div
+      var tab = $(tabs[i]);
+
+      // get the id then sanitize it for use with bootstrap tabs
+      var id = tab.attr('id');
+
+      // see if this is marked as the active tab
+      if (tab.hasClass('active'))
+        activeTab = i;
+
+      // remove any table of contents entries associated with
+      // this ID (since we'll be removing the heading element)
+      $("div#" + tocID + " li a[href='#" + id + "']").parent().remove();
+
+      // sanitize the id for use with bootstrap tabs
+      id = id.replace(/[.\/?&!#<>]/g, '').replace(/\s/g, '_');
+      tab.attr('id', id);
+
+      // get the heading element within it, grab it's text, then remove it
+      var heading = tab.find('h' + tabLevel + ':first');
+      var headingText = heading.html();
+      heading.remove();
+
+      // build and append the tab list item
+      var a = $('<a role="tab" data-toggle="tab">' + headingText + '</a>');
+      a.attr('href', '#' + id);
+      a.attr('aria-controls', id);
+      var li = $('<li role="presentation"></li>');
+      li.append(a);
+      tabList.append(li);
+
+      // set it's attributes
+      tab.attr('role', 'tabpanel');
+      tab.addClass('tab-pane');
+      tab.addClass('tabbed-pane');
+      if (fade)
+        tab.addClass('fade');
+
+      // move it into the tab content div
+      tab.detach().appendTo(tabContent);
+    });
+
+    // set active tab
+    $(tabList.children('li')[activeTab]).addClass('active');
+    var active = $(tabContent.children('div.section')[activeTab]);
+    active.addClass('active');
+    if (fade)
+      active.addClass('in');
+
+    if (tabset.hasClass("tabset-sticky"))
+      tabset.rmarkdownStickyTabs();
+  }
+
+  // convert section divs with the .tabset class to tabsets
+  var tabsets = $("div.section.tabset");
+  tabsets.each(function(i) {
+    buildTabset($(tabsets[i]));
+  });
+};
+
+</script>
 <style type="text/css">.pagedtable {
 overflow: auto;
 padding-left: 8px;
@@ -1329,223 +1471,99 @@ window.onload = function() {
   PagedTableDoc.initAll();
 };
 </script>
-<script>
-
-/**
- * jQuery Plugin: Sticky Tabs
- *
- * @author Aidan Lister <aidan@php.net>
- * adapted by Ruben Arslan to activate parent tabs too
- * http://www.aidanlister.com/2014/03/persisting-the-tab-state-in-bootstrap/
- */
-(function($) {
-  "use strict";
-  $.fn.rmarkdownStickyTabs = function() {
-    var context = this;
-    // Show the tab corresponding with the hash in the URL, or the first tab
-    var showStuffFromHash = function() {
-      var hash = window.location.hash;
-      var selector = hash ? 'a[href="' + hash + '"]' : 'li.active > a';
-      var $selector = $(selector, context);
-      if($selector.data('toggle') === "tab") {
-        $selector.tab('show');
-        // walk up the ancestors of this element, show any hidden tabs
-        $selector.parents('.section.tabset').each(function(i, elm) {
-          var link = $('a[href="#' + $(elm).attr('id') + '"]');
-          if(link.data('toggle') === "tab") {
-            link.tab("show");
-          }
-        });
-      }
-    };
 
 
-    // Set the correct tab when the page loads
-    showStuffFromHash(context);
-
-    // Set the correct tab when a user uses their back/forward button
-    $(window).on('hashchange', function() {
-      showStuffFromHash(context);
-    });
-
-    // Change the URL when tabs are clicked
-    $('a', context).on('click', function(e) {
-      history.pushState(null, null, this.href);
-      showStuffFromHash(context);
-    });
-
-    return this;
-  };
-}(jQuery));
-
-window.buildTabsets = function(tocID) {
-
-  // build a tabset from a section div with the .tabset class
-  function buildTabset(tabset) {
-
-    // check for fade and pills options
-    var fade = tabset.hasClass("tabset-fade");
-    var pills = tabset.hasClass("tabset-pills");
-    var navClass = pills ? "nav-pills" : "nav-tabs";
-
-    // determine the heading level of the tabset and tabs
-    var match = tabset.attr('class').match(/level(\d) /);
-    if (match === null)
-      return;
-    var tabsetLevel = Number(match[1]);
-    var tabLevel = tabsetLevel + 1;
-
-    // find all subheadings immediately below
-    var tabs = tabset.find("div.section.level" + tabLevel);
-    if (!tabs.length)
-      return;
-
-    // create tablist and tab-content elements
-    var tabList = $('<ul class="nav ' + navClass + '" role="tablist"></ul>');
-    $(tabs[0]).before(tabList);
-    var tabContent = $('<div class="tab-content"></div>');
-    $(tabs[0]).before(tabContent);
-
-    // build the tabset
-    var activeTab = 0;
-    tabs.each(function(i) {
-
-      // get the tab div
-      var tab = $(tabs[i]);
-
-      // get the id then sanitize it for use with bootstrap tabs
-      var id = tab.attr('id');
-
-      // see if this is marked as the active tab
-      if (tab.hasClass('active'))
-        activeTab = i;
-
-      // remove any table of contents entries associated with
-      // this ID (since we'll be removing the heading element)
-      $("div#" + tocID + " li a[href='#" + id + "']").parent().remove();
-
-      // sanitize the id for use with bootstrap tabs
-      id = id.replace(/[.\/?&!#<>]/g, '').replace(/\s/g, '_');
-      tab.attr('id', id);
-
-      // get the heading element within it, grab it's text, then remove it
-      var heading = tab.find('h' + tabLevel + ':first');
-      var headingText = heading.html();
-      heading.remove();
-
-      // build and append the tab list item
-      var a = $('<a role="tab" data-toggle="tab">' + headingText + '</a>');
-      a.attr('href', '#' + id);
-      a.attr('aria-controls', id);
-      var li = $('<li role="presentation"></li>');
-      li.append(a);
-      tabList.append(li);
-
-      // set it's attributes
-      tab.attr('role', 'tabpanel');
-      tab.addClass('tab-pane');
-      tab.addClass('tabbed-pane');
-      if (fade)
-        tab.addClass('fade');
-
-      // move it into the tab content div
-      tab.detach().appendTo(tabContent);
-    });
-
-    // set active tab
-    $(tabList.children('li')[activeTab]).addClass('active');
-    var active = $(tabContent.children('div.section')[activeTab]);
-    active.addClass('active');
-    if (fade)
-      active.addClass('in');
-
-    if (tabset.hasClass("tabset-sticky"))
-      tabset.rmarkdownStickyTabs();
-  }
-
-  // convert section divs with the .tabset class to tabsets
-  var tabsets = $("div.section.tabset");
-  tabsets.each(function(i) {
-    buildTabset($(tabsets[i]));
-  });
-};
-
-</script>
-<script>
-window.initializeCodeFolding = function(show) {
-
-  // handlers for show-all and hide all
-  $("#rmd-show-all-code").click(function() {
-    $('div.r-code-collapse').each(function() {
-      $(this).collapse('show');
-    });
-  });
-  $("#rmd-hide-all-code").click(function() {
-    $('div.r-code-collapse').each(function() {
-      $(this).collapse('hide');
-    });
-  });
-
-  // index for unique code element ids
-  var currentIndex = 1;
-
-  // select all R code blocks
-  var rCodeBlocks = $('pre.r, pre.python, pre.bash, pre.sql, pre.cpp, pre.stan, pre.julia');
-  rCodeBlocks.each(function() {
-
-    // create a collapsable div to wrap the code in
-    var div = $('<div class="collapse r-code-collapse"></div>');
-    if (show)
-      div.addClass('in');
-    var id = 'rcode-643E0F36' + currentIndex++;
-    div.attr('id', id);
-    $(this).before(div);
-    $(this).detach().appendTo(div);
-
-    // add a show code button right above
-    var showCodeText = $('<span>' + (show ? 'Hide' : 'Code') + '</span>');
-    var showCodeButton = $('<button type="button" class="btn btn-default btn-xs code-folding-btn pull-right"></button>');
-    showCodeButton.append(showCodeText);
-    showCodeButton
-        .attr('data-toggle', 'collapse')
-        .attr('data-target', '#' + id)
-        .attr('aria-expanded', show)
-        .attr('aria-controls', id);
-
-    var buttonRow = $('<div class="row"></div>');
-    var buttonCol = $('<div class="col-md-12"></div>');
-
-    buttonCol.append(showCodeButton);
-    buttonRow.append(buttonCol);
-
-    div.before(buttonRow);
-
-    // update state of button on show/hide
-    div.on('hidden.bs.collapse', function () {
-      showCodeText.text('Code');
-    });
-    div.on('show.bs.collapse', function () {
-      showCodeText.text('Hide');
-    });
-  });
-
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
 }
-</script>
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
 <script>
-window.initializeSourceEmbed = function(filename) {
-  $("#rmd-download-source").click(function() {
-    var src = $("#rmd-source-code").html();
-    var a = document.createElement('a');
-    a.href = "data:text/x-r-markdown;base64," + src;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-  });
-};
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' || rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
 </script>
-
-
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
 
 
 <style type="text/css">
@@ -1572,9 +1590,6 @@ h6 {
 }
 .table th:not([align]) {
   text-align: left;
-}
-#rmd-source-code {
-  display: none;
 }
 </style>
 
@@ -1609,30 +1624,6 @@ summary {
 }
 </style>
 
-<style type="text/css">
-.kable-table {
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  overflow: auto;
-  padding-left: 8px;
-  padding-right: 8px;
-  margin-bottom: 20px;
-  max-height: 350px;
-}
-
-.kable-table table {
-  margin-bottom: 0px;
-}
-
-.kable-table table>thead>tr>th {
-  border: none;
-  border-bottom: 2px solid #dddddd;
-}
-
-.kable-table table>thead {
-  background-color: #fff;
-}
-</style>
 
 
 <!-- tabsets -->
@@ -1704,15 +1695,6 @@ $(document).ready(function () {
 </script>
 
 <!-- code folding -->
-<style type="text/css">
-.code-folding-btn { margin-bottom: 4px; }
-</style>
-<script>
-$(document).ready(function () {
-  window.initializeSourceEmbed("gganimate.Rmd");
-  window.initializeCodeFolding("show" === "show");
-});
-</script>
 
 
 
@@ -1728,16 +1710,6 @@ $(document).ready(function () {
 
 
 <div class="fluid-row" id="header">
-
-<div class="btn-group pull-right">
-<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
-<ul class="dropdown-menu" style="min-width: 50px;">
-<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
-<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
-<li role="separator" class="divider"></li>
-<li><a id="rmd-download-source" href="#">Download Rmd</a></li>
-</ul>
-</div>
 
 
 
@@ -1757,53 +1729,110 @@ $(document).ready(function () {
 </ul>
 </div>
 
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="co"># Packages you need</span></a>
+<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw">library</span>(tidyverse); <span class="kw">library</span>(gganimate)</a>
+<a class="sourceLine" id="cb1-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb1-4" data-line-number="4"><span class="co"># Packages you may not have and can install</span></a>
+<a class="sourceLine" id="cb1-5" data-line-number="5"><span class="kw">library</span>(ggrepel)</a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw">load</span>(<span class="st">'data/starwars_df.RData'</span>)  <span class="co"># load starwars data frames</span></a>
+<a class="sourceLine" id="cb2-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb2-3" data-line-number="3">bar =<span class="st"> </span>people_df <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb2-4" data-line-number="4"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">homeworld =</span> <span class="kw">fct_lump</span>(homeworld, <span class="dt">n =</span> <span class="dv">4</span>)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="st">  </span><span class="kw">drop_na</span>(homeworld) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb2-6" data-line-number="6"><span class="st">  </span><span class="kw">ggplot</span>() <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb2-7" data-line-number="7"><span class="st">  </span><span class="kw">geom_bar</span>(<span class="kw">aes</span>(<span class="dt">x =</span> homeworld, <span class="dt">fill =</span> homeworld), <span class="dt">show.legend =</span> F)</a>
+<a class="sourceLine" id="cb2-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb2-9" data-line-number="9">smooth =<span class="st"> </span>people_df <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb2-10" data-line-number="10"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">is.na</span>(gender) <span class="op">&amp;</span><span class="st"> </span><span class="op">!</span><span class="kw">grepl</span>(name, <span class="dt">pattern =</span> <span class="st">'Jabba'</span>)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb2-11" data-line-number="11"><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x=</span>mass, <span class="dt">y=</span>height)) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb2-12" data-line-number="12"><span class="st">  </span><span class="kw">geom_point</span>() <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb2-13" data-line-number="13"><span class="st">  </span><span class="kw">geom_smooth</span>()</a>
+<a class="sourceLine" id="cb2-14" data-line-number="14"></a>
+<a class="sourceLine" id="cb2-15" data-line-number="15">scatter =<span class="st"> </span>starships_df <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb2-16" data-line-number="16"><span class="st">  </span><span class="kw">arrange</span>(length) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb2-17" data-line-number="17"><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> length, <span class="dt">y =</span> cost_in_credits)) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb2-18" data-line-number="18"><span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">color =</span> <span class="kw">log</span>(cost_in_credits<span class="op">*</span>length)), <span class="dt">size =</span> <span class="dv">5</span>, <span class="dt">show.legend =</span> F) <span class="op">+</span></a>
+<a class="sourceLine" id="cb2-19" data-line-number="19"><span class="st">  </span><span class="kw">geom_text_repel</span>(<span class="kw">aes</span>(<span class="dt">label =</span> name), <span class="dt">size=</span><span class="dv">6</span>, <span class="dt">color =</span> <span class="st">'gray50'</span>) <span class="op">+</span><span class="st"> </span><span class="co"># requires ggrepel</span></a>
+<a class="sourceLine" id="cb2-20" data-line-number="20"><span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="dt">trans =</span> <span class="st">'log'</span>) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb2-21" data-line-number="21"><span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="dt">trans =</span> <span class="st">'log'</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb2-22" data-line-number="22"><span class="st">  </span><span class="kw">scale_color_viridis_c</span>()</a>
+<a class="sourceLine" id="cb2-23" data-line-number="23"></a>
+<a class="sourceLine" id="cb2-24" data-line-number="24">box =<span class="st"> </span>people_df <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb2-25" data-line-number="25"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">species =</span> <span class="kw">fct_lump</span>(species, <span class="dt">n =</span> <span class="dv">2</span>)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb2-26" data-line-number="26"><span class="st">  </span><span class="kw">drop_na</span>(species) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb2-27" data-line-number="27"><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x=</span> species, <span class="dt">y =</span> mass)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb2-28" data-line-number="28"><span class="st">  </span><span class="kw">geom_boxplot</span>()</a></code></pre></div>
 <div id="a-starting-point" class="section level2">
 <h2>A starting point</h2>
 <p>Note that <em>all animations will take at least several seconds to produce</em>. To reduce this you can change the number of frames used, though this will typically make for a choppier plot. Note that output will be forced to the viewer instead of inline also.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">box <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="st">  </span><span class="kw">transition_states</span>(</a>
+<a class="sourceLine" id="cb3-3" data-line-number="3">    species,</a>
+<a class="sourceLine" id="cb3-4" data-line-number="4">    <span class="dt">transition_length =</span> <span class="dv">2</span>,</a>
+<a class="sourceLine" id="cb3-5" data-line-number="5">    <span class="dt">state_length =</span> <span class="dv">1</span></a>
+<a class="sourceLine" id="cb3-6" data-line-number="6">  ) <span class="op">+</span></a>
+<a class="sourceLine" id="cb3-7" data-line-number="7"><span class="st">  </span><span class="kw">enter_fade</span>() <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb3-8" data-line-number="8"><span class="st">  </span><span class="kw">exit_shrink</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb3-9" data-line-number="9"><span class="st">  </span><span class="kw">ease_aes</span>(<span class="st">'sine-in-out'</span>)</a></code></pre></div>
 <p>To see what’s going on, let’s take it step by step. The <code>transition_states</code> function specifies how the plot information goes from one state to the next and how ‘states’ is defined. In this case, our states are represented by species. The <code>transition_length</code> is the ‘relative length of the transition’, but can be as many values as there are states. The <code>state_length</code> determines how long we pause (in terms of number of frames) at each state. We’ll talk about the others as we go along.</p>
 <p>Typically you may want to assign the plot to an object so that you can use the <code>animate</code> function for more control.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">p =<span class="st"> </span>box <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb4-2" data-line-number="2"><span class="st">  </span><span class="kw">transition_states</span>(</a>
+<a class="sourceLine" id="cb4-3" data-line-number="3">    species,</a>
+<a class="sourceLine" id="cb4-4" data-line-number="4">    <span class="dt">transition_length =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">10</span>, <span class="dv">5</span>), </a>
+<a class="sourceLine" id="cb4-5" data-line-number="5">    <span class="dt">state_length =</span> <span class="dv">2</span></a>
+<a class="sourceLine" id="cb4-6" data-line-number="6">  ) <span class="op">+</span></a>
+<a class="sourceLine" id="cb4-7" data-line-number="7"><span class="st">  </span><span class="kw">enter_fade</span>() <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb4-8" data-line-number="8"><span class="st">  </span><span class="kw">exit_shrink</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb4-9" data-line-number="9"><span class="st">  </span><span class="kw">ease_aes</span>(<span class="st">'sine-in-out'</span>)</a>
+<a class="sourceLine" id="cb4-10" data-line-number="10"></a>
+<a class="sourceLine" id="cb4-11" data-line-number="11"><span class="kw">animate</span>(p, <span class="dt">nframes =</span> <span class="dv">50</span>)</a></code></pre></div>
 </div>
 <div id="transitions" class="section level2">
 <h2>Transitions</h2>
 <p>There are many <strong>transitions</strong>, though you’ll probably use <code>_states</code> and <code>_reveal</code>. The former works on some categorical variable as we saw before, while the latter works on an ordered (numeric) variable. A variant of it is <code>transition_time</code>, which can work with an actual date variable. In the following, text will be revealed by release date.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">film_timeline =<span class="st"> </span>films_df <span class="op">%&gt;%</span><span class="st">  </span></a>
+<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> release_date, <span class="dt">y =</span> <span class="dv">0</span>)) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb5-3" data-line-number="3"><span class="st">  </span><span class="kw">geom_text</span>(<span class="kw">aes</span>(<span class="dt">label =</span> title, <span class="dt">color =</span> title), </a>
+<a class="sourceLine" id="cb5-4" data-line-number="4">            <span class="dt">position =</span> <span class="kw">position_jitter</span>(<span class="dt">width =</span> <span class="fl">0.1</span>, <span class="dt">height =</span> <span class="fl">.1</span>),</a>
+<a class="sourceLine" id="cb5-5" data-line-number="5">            <span class="dt">size =</span> <span class="dv">5</span>,</a>
+<a class="sourceLine" id="cb5-6" data-line-number="6">            <span class="dt">show.legend =</span> F) <span class="op">+</span></a>
+<a class="sourceLine" id="cb5-7" data-line-number="7"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">y =</span> <span class="st">''</span>) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb5-8" data-line-number="8"><span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb5-9" data-line-number="9"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.text.y =</span> <span class="kw">element_blank</span>()) </a>
+<a class="sourceLine" id="cb5-10" data-line-number="10"></a>
+<a class="sourceLine" id="cb5-11" data-line-number="11">p =<span class="st"> </span>film_timeline <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb5-12" data-line-number="12"><span class="st">  </span><span class="kw">transition_time</span>(release_date) </a>
+<a class="sourceLine" id="cb5-13" data-line-number="13"></a>
+<a class="sourceLine" id="cb5-14" data-line-number="14"><span class="kw">animate</span>(p, <span class="dt">end_pause =</span> <span class="dv">25</span>)</a></code></pre></div>
 <p>See how this contrasts with <code>transition_reveal</code></p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">p =<span class="st"> </span>film_timeline <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb6-2" data-line-number="2"><span class="st">  </span><span class="kw">transition_reveal</span>(release_date) </a>
+<a class="sourceLine" id="cb6-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb6-4" data-line-number="4"><span class="kw">animate</span>(p, <span class="dt">nframes=</span><span class="dv">50</span>)</a></code></pre></div>
 <p>We can use the <code>glue</code> package to insert text into the titles. Each type of transition comes with named objects we can use. With <code>transition_time</code>, the unique value is <code>frame_time</code>, but others are generically available.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">p =<span class="st"> </span>film_timeline <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb7-2" data-line-number="2"><span class="st">  </span><span class="kw">transition_time</span>(release_date) <span class="op">+</span></a>
+<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="st">  </span><span class="kw">ggtitle</span>(<span class="st">'Now showing {frame_time}'</span>,</a>
+<a class="sourceLine" id="cb7-4" data-line-number="4">          <span class="dt">subtitle =</span> <span class="st">'Frame {frame} of {nframes}'</span>)</a>
+<a class="sourceLine" id="cb7-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb7-6" data-line-number="6"><span class="kw">animate</span>(p, <span class="dt">nframes=</span><span class="dv">50</span>)</a></code></pre></div>
 <p>Another that might come in handy is revealing the plot by the layers used to construct it. With the following we introduce some redundancy to take advantage of this.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">mass_height =<span class="st"> </span>people_df <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb8-2" data-line-number="2"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">is.na</span>(gender) <span class="op">&amp;</span><span class="st"> </span><span class="op">!</span><span class="kw">grepl</span>(name, <span class="dt">pattern =</span> <span class="st">'Jabba'</span>)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb8-3" data-line-number="3"><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x=</span>mass, <span class="dt">y=</span>height)) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb8-4" data-line-number="4"><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">alpha =</span> <span class="fl">.5</span>) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb8-5" data-line-number="5"><span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">color =</span> species <span class="op">==</span><span class="st"> 'Human'</span>), <span class="dt">show.legend =</span> F) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb8-6" data-line-number="6"><span class="st">  </span><span class="kw">geom_smooth</span>(<span class="dt">se =</span> T, <span class="dt">color =</span> <span class="ot">NA</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb8-7" data-line-number="7"><span class="st">  </span><span class="kw">geom_smooth</span>(<span class="dt">se =</span> F, <span class="dt">color =</span> <span class="st">'#00aaff'</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb8-8" data-line-number="8"><span class="st">  </span><span class="kw">geom_smooth</span>(<span class="dt">se =</span> F, <span class="dt">method =</span> <span class="st">'lm'</span>, <span class="dt">color =</span> <span class="st">'#ff5500'</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb8-9" data-line-number="9"><span class="st">  </span><span class="kw">theme_void</span>()</a>
+<a class="sourceLine" id="cb8-10" data-line-number="10">  </a>
+<a class="sourceLine" id="cb8-11" data-line-number="11"></a>
+<a class="sourceLine" id="cb8-12" data-line-number="12">p =<span class="st"> </span>mass_height <span class="op">+</span></a>
+<a class="sourceLine" id="cb8-13" data-line-number="13"><span class="st">  </span><span class="kw">transition_layers</span>()</a>
+<a class="sourceLine" id="cb8-14" data-line-number="14"></a>
+<a class="sourceLine" id="cb8-15" data-line-number="15"><span class="kw">animate</span>(p, <span class="dt">nframes =</span> <span class="dv">50</span>)</a></code></pre></div>
 <p>The list of transitions includes:</p>
 <ul>
 <li><code>transition_components</code></li>
@@ -1820,14 +1849,21 @@ $(document).ready(function () {
 <div id="enterexit" class="section level2">
 <h2>Enter/Exit</h2>
 <p>We have many options for how the plots enter and leave the space. In the following, we use <code>enter_drift</code> to let the previous plot linger a bit.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">p =<span class="st"> </span>box <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb9-2" data-line-number="2"><span class="st">  </span><span class="kw">transition_states</span>(</a>
+<a class="sourceLine" id="cb9-3" data-line-number="3">    species</a>
+<a class="sourceLine" id="cb9-4" data-line-number="4">  ) <span class="op">+</span></a>
+<a class="sourceLine" id="cb9-5" data-line-number="5"><span class="st">  </span><span class="kw">enter_drift</span>() </a>
+<a class="sourceLine" id="cb9-6" data-line-number="6"></a>
+<a class="sourceLine" id="cb9-7" data-line-number="7"><span class="kw">anim</span>(p, <span class="dt">nframes =</span> <span class="dv">50</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">p =<span class="st"> </span>bar <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb10-2" data-line-number="2"><span class="st">  </span><span class="kw">transition_states</span>(</a>
+<a class="sourceLine" id="cb10-3" data-line-number="3">    homeworld</a>
+<a class="sourceLine" id="cb10-4" data-line-number="4">  ) <span class="op">+</span></a>
+<a class="sourceLine" id="cb10-5" data-line-number="5"><span class="st">  </span><span class="kw">enter_grow</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb10-6" data-line-number="6"><span class="st">  </span><span class="kw">exit_shrink</span>()</a>
+<a class="sourceLine" id="cb10-7" data-line-number="7"></a>
+<a class="sourceLine" id="cb10-8" data-line-number="8"><span class="kw">animate</span>(p, <span class="dt">nframes =</span> <span class="dv">50</span>)</a></code></pre></div>
 <p>Here are the options we can play with. They have a corresponding <code>exit_*</code> function.</p>
 <ul>
 <li><code>enter_manual</code></li>
@@ -1853,10 +1889,20 @@ $(document).ready(function () {
 <div id="easing" class="section level2">
 <h2>Easing</h2>
 <p>With easing we can define the velocity with which aesthetics change during an animation. This is done with <code>ease_aes</code>. By default the transition is ‘linear’, but let’s see some others.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">mass_height =<span class="st"> </span>people_df <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb11-2" data-line-number="2"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Human =</span> <span class="kw">factor</span>(species <span class="op">==</span><span class="st"> 'Human'</span>, <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">'Other'</span>, <span class="st">'Human'</span>))) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb11-3" data-line-number="3"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">is.na</span>(gender) <span class="op">&amp;</span><span class="st"> </span><span class="op">!</span><span class="kw">grepl</span>(name, <span class="dt">pattern =</span> <span class="st">'Jabba'</span>)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb11-4" data-line-number="4"><span class="st">  </span><span class="kw">drop_na</span>(Human, mass, height) <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># to remove warnings</span></a>
+<a class="sourceLine" id="cb11-5" data-line-number="5"><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> mass, <span class="dt">y =</span> height)) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb11-6" data-line-number="6"><span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">color =</span> Human, <span class="dt">group =</span> <span class="dv">1</span>), <span class="dt">show.legend =</span> T)</a>
+<a class="sourceLine" id="cb11-7" data-line-number="7"></a>
+<a class="sourceLine" id="cb11-8" data-line-number="8">p =<span class="st"> </span>mass_height <span class="op">+</span></a>
+<a class="sourceLine" id="cb11-9" data-line-number="9"><span class="st">  </span><span class="kw">transition_states</span>(Human, <span class="dt">transition_length =</span> <span class="dv">5</span>, <span class="dt">state_length =</span> <span class="dv">1</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb11-10" data-line-number="10"><span class="st">  </span><span class="kw">enter_fade</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb11-11" data-line-number="11"><span class="st">  </span><span class="kw">exit_fade</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb11-12" data-line-number="12"><span class="st">  </span><span class="kw">ease_aes</span>(<span class="dt">y =</span> <span class="st">'bounce-in-out'</span>)</a>
+<a class="sourceLine" id="cb11-13" data-line-number="13"></a>
+<a class="sourceLine" id="cb11-14" data-line-number="14"><span class="kw">animate</span>(p, <span class="dt">nframes =</span>  <span class="dv">50</span>)</a></code></pre></div>
 <p>Easing functions:</p>
 <ul>
 <li><code>quadratic</code> Models a power-of-2 function</li>
@@ -1876,10 +1922,7 @@ $(document).ready(function () {
 <div id="animate-options" class="section level2">
 <h2>Animate options</h2>
 <p>When using</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">animate</a></code></pre></div>
 </div>
 <div id="common-issues" class="section level2">
 <h2>Common issues</h2>
@@ -1887,40 +1930,72 @@ $(document).ready(function () {
 <h4>Simple breakage</h4>
 <p>Often you’ll just get an error. This means you’ll need to read the documentation correctly, as you likely have not used the correct variable type, and in general have not provided the function what it expects.</p>
 <p>As an example, let’s try to use <code>transition_reveal</code> for a categorical.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">mass_height =<span class="st"> </span>people_df <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb13-2" data-line-number="2"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Human =</span> <span class="kw">factor</span>(species <span class="op">==</span><span class="st"> 'Human'</span>, <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">'Other'</span>, <span class="st">'Human'</span>))) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb13-3" data-line-number="3"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">is.na</span>(gender) <span class="op">&amp;</span><span class="st"> </span><span class="op">!</span><span class="kw">grepl</span>(name, <span class="dt">pattern =</span> <span class="st">'Jabba'</span>)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb13-4" data-line-number="4"><span class="st">  </span><span class="kw">drop_na</span>(Human, mass, height) <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># to remove warnings</span></a>
+<a class="sourceLine" id="cb13-5" data-line-number="5"><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> mass, <span class="dt">y =</span> height)) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb13-6" data-line-number="6"><span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">color =</span> Human), <span class="dt">show.legend =</span> T)</a>
+<a class="sourceLine" id="cb13-7" data-line-number="7"></a>
+<a class="sourceLine" id="cb13-8" data-line-number="8">mass_height <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb13-9" data-line-number="9"><span class="st">  </span><span class="kw">transition_reveal</span>(Human)</a></code></pre></div>
 <p>It states clearly what’s needed for this transition, and we didn’t provide it.</p>
 </div>
 <div id="but-it-worked-before" class="section level4">
 <h4>But it worked before!</h4>
 <p>Sometimes what <em>should</em> work apparently does not. For example look at the following, which is our easing example from before. This time, no bounce!</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1">people_df <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb14-2" data-line-number="2"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Human =</span> <span class="kw">factor</span>(species <span class="op">==</span><span class="st"> 'Human'</span>, <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">'Other'</span>, <span class="st">'Human'</span>))) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb14-3" data-line-number="3"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">is.na</span>(gender) <span class="op">&amp;</span><span class="st"> </span><span class="op">!</span><span class="kw">grepl</span>(name, <span class="dt">pattern =</span> <span class="st">'Jabba'</span>)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb14-4" data-line-number="4"><span class="st">  </span><span class="kw">drop_na</span>(Human, mass, height) <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># to remove warnings</span></a>
+<a class="sourceLine" id="cb14-5" data-line-number="5"><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> mass, <span class="dt">y =</span> height)) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb14-6" data-line-number="6"><span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">color =</span> Human), <span class="dt">show.legend =</span> T)</a>
+<a class="sourceLine" id="cb14-7" data-line-number="7"></a>
+<a class="sourceLine" id="cb14-8" data-line-number="8">p =<span class="st"> </span>mass_height <span class="op">+</span></a>
+<a class="sourceLine" id="cb14-9" data-line-number="9"><span class="st">  </span><span class="kw">transition_states</span>(Human, <span class="dt">transition_length =</span> <span class="dv">5</span>, <span class="dt">state_length =</span> <span class="dv">1</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb14-10" data-line-number="10"><span class="st">  </span><span class="kw">enter_fade</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb14-11" data-line-number="11"><span class="st">  </span><span class="kw">exit_fade</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb14-12" data-line-number="12"><span class="st">  </span><span class="kw">ease_aes</span>(<span class="dt">y =</span> <span class="st">'bounce-in-out'</span>)</a>
+<a class="sourceLine" id="cb14-13" data-line-number="13"></a>
+<a class="sourceLine" id="cb14-14" data-line-number="14"><span class="kw">animate</span>(p, <span class="dt">nframes =</span>  <span class="dv">50</span>)</a></code></pre></div>
 <p>Why does this happen? Because behind the scenes some sort of grouping is being done on the data. By specifying the color argument, we only have the two groups, while we want each individual point to bounce. If we add a <code>group = 1</code> aesthetic as we did the first time, we can get what we want. As stated in the documentation, the group aesthetic defines how the data in a layer is matched across the animation.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1">p =<span class="st"> </span>people_df <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb15-2" data-line-number="2"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Human =</span> <span class="kw">factor</span>(species <span class="op">==</span><span class="st"> 'Human'</span>, <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">'Other'</span>, <span class="st">'Human'</span>))) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb15-3" data-line-number="3"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">is.na</span>(gender) <span class="op">&amp;</span><span class="st"> </span><span class="op">!</span><span class="kw">grepl</span>(name, <span class="dt">pattern =</span> <span class="st">'Jabba'</span>)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb15-4" data-line-number="4"><span class="st">  </span><span class="kw">drop_na</span>(Human, mass, height) <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># to remove warnings</span></a>
+<a class="sourceLine" id="cb15-5" data-line-number="5"><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> mass, <span class="dt">y =</span> height)) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb15-6" data-line-number="6"><span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">color =</span> Human, <span class="dt">group =</span> <span class="dv">1</span>), <span class="dt">show.legend =</span> T)</a>
+<a class="sourceLine" id="cb15-7" data-line-number="7"></a>
+<a class="sourceLine" id="cb15-8" data-line-number="8">p =<span class="st"> </span>mass_height <span class="op">+</span></a>
+<a class="sourceLine" id="cb15-9" data-line-number="9"><span class="st">  </span><span class="kw">transition_states</span>(Human, <span class="dt">transition_length =</span> <span class="dv">5</span>, <span class="dt">state_length =</span> <span class="dv">1</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb15-10" data-line-number="10"><span class="st">  </span><span class="kw">enter_fade</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb15-11" data-line-number="11"><span class="st">  </span><span class="kw">exit_fade</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb15-12" data-line-number="12"><span class="st">  </span><span class="kw">ease_aes</span>(<span class="dt">y =</span> <span class="st">'elastic-in-out'</span>)</a>
+<a class="sourceLine" id="cb15-13" data-line-number="13"></a>
+<a class="sourceLine" id="cb15-14" data-line-number="14"><span class="kw">animate</span>(p, <span class="dt">nframes =</span> <span class="dv">50</span>)</a></code></pre></div>
 </div>
 <div id="wrong-transition-to-convey-the-effect" class="section level4">
 <h4>Wrong transition to convey the effect</h4>
 <p>The previous plot makes it look as though humans are transitioning to/from non-humans. In this case, it would be more appropriate to not have such a transition ease. We can still use other effects, like enter/exit, if we like.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1">p =<span class="st"> </span>people_df <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb16-2" data-line-number="2"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Human =</span> <span class="kw">factor</span>(species <span class="op">==</span><span class="st"> 'Human'</span>, <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">'Other'</span>, <span class="st">'Human'</span>))) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb16-3" data-line-number="3"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">is.na</span>(gender) <span class="op">&amp;</span><span class="st"> </span><span class="op">!</span><span class="kw">grepl</span>(name, <span class="dt">pattern =</span> <span class="st">'Jabba'</span>)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb16-4" data-line-number="4"><span class="st">  </span><span class="kw">drop_na</span>(Human, mass, height) <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># to remove warnings</span></a>
+<a class="sourceLine" id="cb16-5" data-line-number="5"><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> mass, <span class="dt">y =</span> height)) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb16-6" data-line-number="6"><span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">color =</span> Human, <span class="dt">group =</span> Human), <span class="dt">show.legend =</span> T)</a>
+<a class="sourceLine" id="cb16-7" data-line-number="7"></a>
+<a class="sourceLine" id="cb16-8" data-line-number="8">p =<span class="st"> </span>p <span class="op">+</span></a>
+<a class="sourceLine" id="cb16-9" data-line-number="9"><span class="st">  </span><span class="kw">transition_states</span>(Human, <span class="dt">transition_length =</span> <span class="dv">2</span>, <span class="dt">state_length =</span> <span class="dv">1</span>) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb16-10" data-line-number="10"><span class="st">  </span><span class="kw">enter_fade</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb16-11" data-line-number="11"><span class="st">  </span><span class="kw">exit_drift</span>(<span class="dt">x_mod =</span> <span class="dv">0</span>, <span class="dt">y_mod =</span> <span class="dv">100</span>)</a>
+<a class="sourceLine" id="cb16-12" data-line-number="12"></a>
+<a class="sourceLine" id="cb16-13" data-line-number="13"><span class="kw">animate</span>(p, <span class="dt">nframes =</span> <span class="dv">50</span>)</a></code></pre></div>
 </div>
 </div>
 <div id="summary" class="section level2">
 <h2>Summary</h2>
-<!-- rnb-text-end -->
 </div>
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiZ2dhbmltYXRlIgpvdXRwdXQ6CiAgaHRtbF9ub3RlYm9vazoKICAgIGhpZ2hsaWdodDogcHlnbWVudHMKICAgIHRoZW1lOiBzYW5kc3RvbmUKICAgIHRvYzogeWVzCiAgaHRtbF9kb2N1bWVudDoKICAgIGhpZ2hsaWdodDogcHlnbWVudHMKICAgIHRoZW1lOiBzYW5kc3RvbmUKICAgIGRmX3ByaW50OiBwYWdlZAogICAgdG9jOiB5ZXMKZWRpdG9yX29wdGlvbnM6CiAgY2h1bmtfb3V0cHV0X3R5cGU6IGNvbnNvbGUKLS0tCgpgYGB7ciBzZXR1cCwgaW5jbHVkZT1GQUxTRX0KIyBvcHRpb25zIGZvciB0aGUga25pdHRlZCBodG1sIGRvY3VtZW50CmtuaXRyOjpvcHRzX2NodW5rJHNldCgKICBlY2hvID0gVCwKICBldmFsID0gRiwKICBtZXNzYWdlID0gRiwKICB3YXJuaW5nID0gRiwKICBjb21tZW50ID0gTkEsCiAgUi5vcHRpb25zID0gbGlzdCh3aWR0aCA9IDEyMCksCiAgY2FjaGUucmVidWlsZCA9IEYsCiAgY2FjaGUgPSBGLAogIGZpZy5hbGlnbiA9ICdjZW50ZXInLAogIGZpZy5hc3AgPSAuNywKICBkZXYgPSAnc3ZnJywKICBkZXYuYXJncyA9IGxpc3QoYmcgPSAndHJhbnNwYXJlbnQnKQopCmBgYAoKYGBge3IgcGFja2FnZXMsIGV2YWw9VFJVRX0KIyBQYWNrYWdlcyB5b3UgbmVlZApsaWJyYXJ5KHRpZHl2ZXJzZSk7IGxpYnJhcnkoZ2dhbmltYXRlKQoKIyBQYWNrYWdlcyB5b3UgbWF5IG5vdCBoYXZlIGFuZCBjYW4gaW5zdGFsbApsaWJyYXJ5KGdncmVwZWwpCmBgYAoKYGBge3IgZGF0YV9wbG90cywgZXZhbD1UUlVFfQpsb2FkKCdkYXRhL3N0YXJ3YXJzX2RmLlJEYXRhJykgICMgbG9hZCBzdGFyd2FycyBkYXRhIGZyYW1lcwoKYmFyID0gcGVvcGxlX2RmICU+JSAKICBtdXRhdGUoaG9tZXdvcmxkID0gZmN0X2x1bXAoaG9tZXdvcmxkLCBuID0gNCkpICU+JSAKICBkcm9wX25hKGhvbWV3b3JsZCkgJT4lIAogIGdncGxvdCgpICsgCiAgZ2VvbV9iYXIoYWVzKHggPSBob21ld29ybGQsIGZpbGwgPSBob21ld29ybGQpLCBzaG93LmxlZ2VuZCA9IEYpCgpzbW9vdGggPSBwZW9wbGVfZGYgJT4lIAogIGZpbHRlcighaXMubmEoZ2VuZGVyKSAmICFncmVwbChuYW1lLCBwYXR0ZXJuID0gJ0phYmJhJykpICU+JSAKICBnZ3Bsb3QoYWVzKHg9bWFzcywgeT1oZWlnaHQpKSArIAogIGdlb21fcG9pbnQoKSArIAogIGdlb21fc21vb3RoKCkKCnNjYXR0ZXIgPSBzdGFyc2hpcHNfZGYgJT4lIAogIGFycmFuZ2UobGVuZ3RoKSAlPiUgCiAgZ2dwbG90KGFlcyh4ID0gbGVuZ3RoLCB5ID0gY29zdF9pbl9jcmVkaXRzKSkgKyAKICBnZW9tX3BvaW50KGFlcyhjb2xvciA9IGxvZyhjb3N0X2luX2NyZWRpdHMqbGVuZ3RoKSksIHNpemUgPSA1LCBzaG93LmxlZ2VuZCA9IEYpICsKICBnZW9tX3RleHRfcmVwZWwoYWVzKGxhYmVsID0gbmFtZSksIHNpemU9NiwgY29sb3IgPSAnZ3JheTUwJykgKyAjIHJlcXVpcmVzIGdncmVwZWwKICBzY2FsZV94X2NvbnRpbnVvdXModHJhbnMgPSAnbG9nJykgKyAKICBzY2FsZV95X2NvbnRpbnVvdXModHJhbnMgPSAnbG9nJykgKwogIHNjYWxlX2NvbG9yX3ZpcmlkaXNfYygpCgpib3ggPSBwZW9wbGVfZGYgJT4lIAogIG11dGF0ZShzcGVjaWVzID0gZmN0X2x1bXAoc3BlY2llcywgbiA9IDIpKSAlPiUgCiAgZHJvcF9uYShzcGVjaWVzKSAlPiUgCiAgZ2dwbG90KGFlcyh4PSBzcGVjaWVzLCB5ID0gbWFzcykpICsKICBnZW9tX2JveHBsb3QoKQpgYGAKCgoKIyMgQSBzdGFydGluZyBwb2ludAoKTm90ZSB0aGF0ICphbGwgYW5pbWF0aW9ucyB3aWxsIHRha2UgYXQgbGVhc3Qgc2V2ZXJhbCBzZWNvbmRzIHRvIHByb2R1Y2UqLiAgVG8gcmVkdWNlIHRoaXMgeW91IGNhbiBjaGFuZ2UgdGhlIG51bWJlciBvZiBmcmFtZXMgdXNlZCwgdGhvdWdoIHRoaXMgd2lsbCB0eXBpY2FsbHkgbWFrZSBmb3IgYSBjaG9wcGllciBwbG90LiBOb3RlIHRoYXQgb3V0cHV0IHdpbGwgYmUgZm9yY2VkIHRvIHRoZSB2aWV3ZXIgaW5zdGVhZCBvZiBpbmxpbmUgYWxzby4KCgpgYGB7ciBmaXJzdF9hbmltYXRpb259CmJveCArIAogIHRyYW5zaXRpb25fc3RhdGVzKAogICAgc3BlY2llcywKICAgIHRyYW5zaXRpb25fbGVuZ3RoID0gMiwKICAgIHN0YXRlX2xlbmd0aCA9IDEKICApICsKICBlbnRlcl9mYWRlKCkgKyAKICBleGl0X3NocmluaygpICsKICBlYXNlX2Flcygnc2luZS1pbi1vdXQnKQpgYGAKClRvIHNlZSB3aGF0J3MgZ29pbmcgb24sIGxldCdzIHRha2UgaXQgc3RlcCBieSBzdGVwLiBUaGUgYHRyYW5zaXRpb25fc3RhdGVzYCBmdW5jdGlvbiBzcGVjaWZpZXMgaG93IHRoZSBwbG90IGluZm9ybWF0aW9uIGdvZXMgZnJvbSBvbmUgc3RhdGUgdG8gdGhlIG5leHQgYW5kIGhvdyAnc3RhdGVzJyBpcyBkZWZpbmVkLiAgSW4gdGhpcyBjYXNlLCBvdXIgc3RhdGVzIGFyZSByZXByZXNlbnRlZCBieSBzcGVjaWVzLiAgIFRoZSBgdHJhbnNpdGlvbl9sZW5ndGhgIGlzIHRoZSAncmVsYXRpdmUgbGVuZ3RoIG9mIHRoZSB0cmFuc2l0aW9uJywgYnV0IGNhbiBiZSBhcyBtYW55IHZhbHVlcyBhcyB0aGVyZSBhcmUgc3RhdGVzLiBUaGUgYHN0YXRlX2xlbmd0aGAgZGV0ZXJtaW5lcyBob3cgbG9uZyB3ZSBwYXVzZSAoaW4gdGVybXMgb2YgbnVtYmVyIG9mIGZyYW1lcykgYXQgZWFjaCBzdGF0ZS4gIFdlJ2xsIHRhbGsgYWJvdXQgdGhlIG90aGVycyBhcyB3ZSBnbyBhbG9uZy4KCgpUeXBpY2FsbHkgeW91IG1heSB3YW50IHRvIGFzc2lnbiB0aGUgcGxvdCB0byBhbiBvYmplY3Qgc28gdGhhdCB5b3UgY2FuIHVzZSB0aGUgYGFuaW1hdGVgIGZ1bmN0aW9uIGZvciBtb3JlIGNvbnRyb2wuCgpgYGB7ciBib3gxfQpwID0gYm94ICsgCiAgdHJhbnNpdGlvbl9zdGF0ZXMoCiAgICBzcGVjaWVzLAogICAgdHJhbnNpdGlvbl9sZW5ndGggPSBjKDEsIDEwLCA1KSwgCiAgICBzdGF0ZV9sZW5ndGggPSAyCiAgKSArCiAgZW50ZXJfZmFkZSgpICsgCiAgZXhpdF9zaHJpbmsoKSArCiAgZWFzZV9hZXMoJ3NpbmUtaW4tb3V0JykKCmFuaW1hdGUocCwgbmZyYW1lcyA9IDUwKQpgYGAKCgoKIyMgVHJhbnNpdGlvbnMKClRoZXJlIGFyZSBtYW55ICoqdHJhbnNpdGlvbnMqKiwgdGhvdWdoIHlvdSdsbCBwcm9iYWJseSB1c2UgYF9zdGF0ZXNgIGFuZCBgX3JldmVhbGAuICBUaGUgZm9ybWVyIHdvcmtzIG9uIHNvbWUgY2F0ZWdvcmljYWwgdmFyaWFibGUgYXMgd2Ugc2F3IGJlZm9yZSwgd2hpbGUgdGhlIGxhdHRlciB3b3JrcyBvbiBhbiBvcmRlcmVkIChudW1lcmljKSB2YXJpYWJsZS4gIEEgdmFyaWFudCBvZiBpdCBpcyBgdHJhbnNpdGlvbl90aW1lYCwgd2hpY2ggY2FuIHdvcmsgd2l0aCBhbiBhY3R1YWwgZGF0ZSB2YXJpYWJsZS4gIEluIHRoZSBmb2xsb3dpbmcsIHRleHQgd2lsbCBiZSByZXZlYWxlZCBieSByZWxlYXNlIGRhdGUuIAoKYGBge3IgdHJhbnNpdGlvbl90aW1lfQpmaWxtX3RpbWVsaW5lID0gZmlsbXNfZGYgJT4lICAKICBnZ3Bsb3QoYWVzKHggPSByZWxlYXNlX2RhdGUsIHkgPSAwKSkgKyAKICBnZW9tX3RleHQoYWVzKGxhYmVsID0gdGl0bGUsIGNvbG9yID0gdGl0bGUpLCAKICAgICAgICAgICAgcG9zaXRpb24gPSBwb3NpdGlvbl9qaXR0ZXIod2lkdGggPSAwLjEsIGhlaWdodCA9IC4xKSwKICAgICAgICAgICAgc2l6ZSA9IDUsCiAgICAgICAgICAgIHNob3cubGVnZW5kID0gRikgKwogIGxhYnMoeSA9ICcnKSArIAogIHRoZW1lX2J3KCkgKwogIHRoZW1lKGF4aXMudGV4dC55ID0gZWxlbWVudF9ibGFuaygpKSAKCnAgPSBmaWxtX3RpbWVsaW5lICsgCiAgdHJhbnNpdGlvbl90aW1lKHJlbGVhc2VfZGF0ZSkgCgphbmltYXRlKHAsIGVuZF9wYXVzZSA9IDI1KQpgYGAKClNlZSBob3cgdGhpcyBjb250cmFzdHMgd2l0aCBgdHJhbnNpdGlvbl9yZXZlYWxgCgpgYGB7ciByZXZlYWxfdnNfdGltZX0KcCA9IGZpbG1fdGltZWxpbmUgKyAKICB0cmFuc2l0aW9uX3JldmVhbChyZWxlYXNlX2RhdGUpIAoKYW5pbWF0ZShwLCBuZnJhbWVzPTUwKQpgYGAKCgoKV2UgY2FuIHVzZSB0aGUgYGdsdWVgIHBhY2thZ2UgdG8gaW5zZXJ0IHRleHQgaW50byB0aGUgdGl0bGVzLiAgRWFjaCB0eXBlIG9mIHRyYW5zaXRpb24gY29tZXMgd2l0aCBuYW1lZCBvYmplY3RzIHdlIGNhbiB1c2UuICBXaXRoIGB0cmFuc2l0aW9uX3RpbWVgLCB0aGUgdW5pcXVlIHZhbHVlIGlzIGBmcmFtZV90aW1lYCwgYnV0IG90aGVycyBhcmUgZ2VuZXJpY2FsbHkgYXZhaWxhYmxlLgoKYGBge3IgZ2x1ZX0KcCA9IGZpbG1fdGltZWxpbmUgKyAKICB0cmFuc2l0aW9uX3RpbWUocmVsZWFzZV9kYXRlKSArCiAgZ2d0aXRsZSgnTm93IHNob3dpbmcge2ZyYW1lX3RpbWV9JywKICAgICAgICAgIHN1YnRpdGxlID0gJ0ZyYW1lIHtmcmFtZX0gb2Yge25mcmFtZXN9JykKCmFuaW1hdGUocCwgbmZyYW1lcz01MCkKYGBgCgoKQW5vdGhlciB0aGF0IG1pZ2h0IGNvbWUgaW4gaGFuZHkgaXMgcmV2ZWFsaW5nIHRoZSBwbG90IGJ5IHRoZSBsYXllcnMgdXNlZCB0byBjb25zdHJ1Y3QgaXQuICBXaXRoIHRoZSBmb2xsb3dpbmcgd2UgaW50cm9kdWNlIHNvbWUgcmVkdW5kYW5jeSB0byB0YWtlIGFkdmFudGFnZSBvZiB0aGlzLgoKYGBge3IgdHJhbnNpdGlvbl9sYXllcnN9Cm1hc3NfaGVpZ2h0ID0gcGVvcGxlX2RmICU+JSAKICBmaWx0ZXIoIWlzLm5hKGdlbmRlcikgJiAhZ3JlcGwobmFtZSwgcGF0dGVybiA9ICdKYWJiYScpKSAlPiUgCiAgZ2dwbG90KGFlcyh4PW1hc3MsIHk9aGVpZ2h0KSkgKyAKICBnZW9tX3BvaW50KGFscGhhID0gLjUpICsgCiAgZ2VvbV9wb2ludChhZXMoY29sb3IgPSBzcGVjaWVzID09ICdIdW1hbicpLCBzaG93LmxlZ2VuZCA9IEYpICsgCiAgZ2VvbV9zbW9vdGgoc2UgPSBULCBjb2xvciA9IE5BKSArCiAgZ2VvbV9zbW9vdGgoc2UgPSBGLCBjb2xvciA9ICcjMDBhYWZmJykgKwogIGdlb21fc21vb3RoKHNlID0gRiwgbWV0aG9kID0gJ2xtJywgY29sb3IgPSAnI2ZmNTUwMCcpICsKICB0aGVtZV92b2lkKCkKICAKCnAgPSBtYXNzX2hlaWdodCArCiAgdHJhbnNpdGlvbl9sYXllcnMoKQoKYW5pbWF0ZShwLCBuZnJhbWVzID0gNTApCmBgYAoKVGhlIGxpc3Qgb2YgdHJhbnNpdGlvbnMgaW5jbHVkZXM6CgotIGB0cmFuc2l0aW9uX2NvbXBvbmVudHNgCi0gYHRyYW5zaXRpb25fZXZlbnRzYAotIGB0cmFuc2l0aW9uX2ZpbHRlcmAKLSBgdHJhbnNpdGlvbl9sYXllcnNgCi0gYHRyYW5zaXRpb25fbWFudWFsYAotIGB0cmFuc2l0aW9uX251bGxgCi0gYHRyYW5zaXRpb25fcmV2ZWFsYAotIGB0cmFuc2l0aW9uX3N0YXRlc2AKLSBgdHJhbnNpdGlvbl90aW1lYAoKIyMgRW50ZXIvRXhpdAoKV2UgaGF2ZSBtYW55IG9wdGlvbnMgZm9yIGhvdyB0aGUgcGxvdHMgZW50ZXIgYW5kIGxlYXZlIHRoZSBzcGFjZS4gIEluIHRoZSBmb2xsb3dpbmcsIHdlIHVzZSBgZW50ZXJfZHJpZnRgIHRvIGxldCB0aGUgcHJldmlvdXMgcGxvdCBsaW5nZXIgYSBiaXQuCgpgYGB7ciBlbnRlcn0KcCA9IGJveCArIAogIHRyYW5zaXRpb25fc3RhdGVzKAogICAgc3BlY2llcwogICkgKwogIGVudGVyX2RyaWZ0KCkgCgphbmltKHAsIG5mcmFtZXMgPSA1MCkKYGBgCgpgYGB7ciBleGl0fQpwID0gYmFyICsgCiAgdHJhbnNpdGlvbl9zdGF0ZXMoCiAgICBob21ld29ybGQKICApICsKICBlbnRlcl9ncm93KCkgKwogIGV4aXRfc2hyaW5rKCkKCmFuaW1hdGUocCwgbmZyYW1lcyA9IDUwKQpgYGAKCkhlcmUgYXJlIHRoZSBvcHRpb25zIHdlIGNhbiBwbGF5IHdpdGguICBUaGV5IGhhdmUgYSBjb3JyZXNwb25kaW5nIGBleGl0XypgIGZ1bmN0aW9uLgoKLSBgZW50ZXJfbWFudWFsYAotIGBlbnRlcl9hcHBlYXJgCi0gYGVudGVyX2ZhZGVgCi0gYGVudGVyX2dyb3dgCi0gYGVudGVyX3JlY29sb3VyYAotIGBlbnRlcl9yZWNvbG9yYAotIGBlbnRlcl9mbHlgCi0gYGVudGVyX2RyaWZ0YAotIGBlbnRlcl9yZXNldGAKCi0gYGV4aXRfbWFudWFsYAotIGBleGl0X2Rpc2FwcGVhcmAKLSBgZXhpdF9mYWRlYAotIGBleGl0X3Nocmlua2AKLSBgZXhpdF9yZWNvbG91cmAKLSBgZXhpdF9yZWNvbG9yYAotIGBleGl0X2ZseWAKLSBgZXhpdF9kcmlmdGAKLSBgZXhpdF9yZXNldGAKCgojIyBFYXNpbmcKCldpdGggZWFzaW5nIHdlIGNhbiBkZWZpbmUgdGhlIHZlbG9jaXR5IHdpdGggd2hpY2ggYWVzdGhldGljcyBjaGFuZ2UgZHVyaW5nIGFuIGFuaW1hdGlvbi4gIFRoaXMgaXMgZG9uZSB3aXRoIGBlYXNlX2Flc2AuICBCeSBkZWZhdWx0IHRoZSB0cmFuc2l0aW9uIGlzICdsaW5lYXInLCBidXQgbGV0J3Mgc2VlIHNvbWUgb3RoZXJzLiAKCmBgYHtyIGVhc2V9Cm1hc3NfaGVpZ2h0ID0gcGVvcGxlX2RmICU+JSAKICBtdXRhdGUoSHVtYW4gPSBmYWN0b3Ioc3BlY2llcyA9PSAnSHVtYW4nLCBsYWJlbHMgPSBjKCdPdGhlcicsICdIdW1hbicpKSkgJT4lIAogIGZpbHRlcighaXMubmEoZ2VuZGVyKSAmICFncmVwbChuYW1lLCBwYXR0ZXJuID0gJ0phYmJhJykpICU+JSAKICBkcm9wX25hKEh1bWFuLCBtYXNzLCBoZWlnaHQpICU+JSAjIHRvIHJlbW92ZSB3YXJuaW5ncwogIGdncGxvdChhZXMoeCA9IG1hc3MsIHkgPSBoZWlnaHQpKSArIAogIGdlb21fcG9pbnQoYWVzKGNvbG9yID0gSHVtYW4sIGdyb3VwID0gMSksIHNob3cubGVnZW5kID0gVCkKCnAgPSBtYXNzX2hlaWdodCArCiAgdHJhbnNpdGlvbl9zdGF0ZXMoSHVtYW4sIHRyYW5zaXRpb25fbGVuZ3RoID0gNSwgc3RhdGVfbGVuZ3RoID0gMSkgKwogIGVudGVyX2ZhZGUoKSArCiAgZXhpdF9mYWRlKCkgKwogIGVhc2VfYWVzKHkgPSAnYm91bmNlLWluLW91dCcpCgphbmltYXRlKHAsIG5mcmFtZXMgPSAgNTApCmBgYAoKCgpFYXNpbmcgZnVuY3Rpb25zOgoKLSBgcXVhZHJhdGljYCBNb2RlbHMgYSBwb3dlci1vZi0yIGZ1bmN0aW9uCi0gYGN1YmljYCBNb2RlbHMgYSBwb3dlci1vZi0zIGZ1bmN0aW9uCi0gYHF1YXJ0aWNgIE1vZGVscyBhIHBvd2VyLW9mLTQgZnVuY3Rpb24KLSBgcXVpbnRpY2AgTW9kZWxzIGEgcG93ZXItb2YtNSBmdW5jdGlvbgotIGBzaW5lYCBNb2RlbHMgYSBzaW5lIGZ1bmN0aW9uCi0gYGNpcmN1bGFyYCBNb2RlbHMgYSBwaS8yIGNpcmNsZSBhcmMKLSBgZXhwb25lbnRpYWxgIE1vZGVscyBhbiBleHBvbmVudGlhbCBmdW5jdGlvbgotIGBlbGFzdGljYCBNb2RlbHMgYW4gZWxhc3RpYyByZWxlYXNlIG9mIGVuZXJneQotIGBiYWNrYCBNb2RlbHMgYSBwdWxsYmFjayBhbmQgcmVsYXNlCi0gYGJvdW5jZWAgTW9kZWxzIHRoZSBib3VuY2luZyBvZiBhIGJhbGwKCgpNb2RpZmllcnMgCgotYGluYCBUaGUgZWFzaW5nIGZ1bmN0aW9uIGlzIGFwcGxpZWQgYXMtaXMKLWBvdXRgIFRoZSBlYXNpbmcgZnVuY3Rpb24gaXMgYXBwbGllZCBpbiByZXZlcnNlCi1gaW4tb3V0YCBUaGUgZmlyc3QgaGFsZiBvZiB0aGUgdHJhbnNpdGlvbiBpdCBpcyBhcHBsaWVkIGFzLWlzLCB3aGlsZSBpbiB0aGUgbGFzdCBoYWxmIGl0IGlzIHJldmVyc2VkCgojIyBBbmltYXRlIG9wdGlvbnMKCldoZW4gdXNpbmcKCmBgYHtyIH0KYW5pbWF0ZQpgYGAKCgoKIyMgQ29tbW9uIGlzc3VlcwoKIyMjIyBTaW1wbGUgYnJlYWthZ2UKCk9mdGVuIHlvdSdsbCBqdXN0IGdldCBhbiBlcnJvci4gIFRoaXMgbWVhbnMgeW91J2xsIG5lZWQgdG8gcmVhZCB0aGUgZG9jdW1lbnRhdGlvbiBjb3JyZWN0bHksIGFzIHlvdSBsaWtlbHkgaGF2ZSBub3QgdXNlZCB0aGUgY29ycmVjdCB2YXJpYWJsZSB0eXBlLCBhbmQgaW4gZ2VuZXJhbCBoYXZlIG5vdCBwcm92aWRlZCB0aGUgZnVuY3Rpb24gd2hhdCBpdCBleHBlY3RzLgoKQXMgYW4gZXhhbXBsZSwgbGV0J3MgdHJ5IHRvIHVzZSBgdHJhbnNpdGlvbl9yZXZlYWxgIGZvciBhIGNhdGVnb3JpY2FsLgoKYGBge3IgYm9ya2VkLCBlcnJvcj1UUlVFfQptYXNzX2hlaWdodCA9IHBlb3BsZV9kZiAlPiUgCiAgbXV0YXRlKEh1bWFuID0gZmFjdG9yKHNwZWNpZXMgPT0gJ0h1bWFuJywgbGFiZWxzID0gYygnT3RoZXInLCAnSHVtYW4nKSkpICU+JSAKICBmaWx0ZXIoIWlzLm5hKGdlbmRlcikgJiAhZ3JlcGwobmFtZSwgcGF0dGVybiA9ICdKYWJiYScpKSAlPiUgCiAgZHJvcF9uYShIdW1hbiwgbWFzcywgaGVpZ2h0KSAlPiUgIyB0byByZW1vdmUgd2FybmluZ3MKICBnZ3Bsb3QoYWVzKHggPSBtYXNzLCB5ID0gaGVpZ2h0KSkgKyAKICBnZW9tX3BvaW50KGFlcyhjb2xvciA9IEh1bWFuKSwgc2hvdy5sZWdlbmQgPSBUKQoKbWFzc19oZWlnaHQgKyAKICB0cmFuc2l0aW9uX3JldmVhbChIdW1hbikKYGBgCgpJdCBzdGF0ZXMgY2xlYXJseSB3aGF0J3MgbmVlZGVkIGZvciB0aGlzIHRyYW5zaXRpb24sIGFuZCB3ZSBkaWRuJ3QgcHJvdmlkZSBpdC4KCgoKIyMjIyBCdXQgaXQgd29ya2VkIGJlZm9yZSEKClNvbWV0aW1lcyB3aGF0ICpzaG91bGQqIHdvcmsgYXBwYXJlbnRseSBkb2VzIG5vdC4gIEZvciBleGFtcGxlIGxvb2sgYXQgdGhlIGZvbGxvd2luZywgd2hpY2ggaXMgb3VyIGVhc2luZyBleGFtcGxlIGZyb20gYmVmb3JlLiAgVGhpcyB0aW1lLCBubyBib3VuY2UhCgpgYGB7ciBicm9rZW5fYm91bmNlfQpwZW9wbGVfZGYgJT4lIAogIG11dGF0ZShIdW1hbiA9IGZhY3RvcihzcGVjaWVzID09ICdIdW1hbicsIGxhYmVscyA9IGMoJ090aGVyJywgJ0h1bWFuJykpKSAlPiUgCiAgZmlsdGVyKCFpcy5uYShnZW5kZXIpICYgIWdyZXBsKG5hbWUsIHBhdHRlcm4gPSAnSmFiYmEnKSkgJT4lIAogIGRyb3BfbmEoSHVtYW4sIG1hc3MsIGhlaWdodCkgJT4lICMgdG8gcmVtb3ZlIHdhcm5pbmdzCiAgZ2dwbG90KGFlcyh4ID0gbWFzcywgeSA9IGhlaWdodCkpICsgCiAgZ2VvbV9wb2ludChhZXMoY29sb3IgPSBIdW1hbiksIHNob3cubGVnZW5kID0gVCkKCnAgPSBtYXNzX2hlaWdodCArCiAgdHJhbnNpdGlvbl9zdGF0ZXMoSHVtYW4sIHRyYW5zaXRpb25fbGVuZ3RoID0gNSwgc3RhdGVfbGVuZ3RoID0gMSkgKwogIGVudGVyX2ZhZGUoKSArCiAgZXhpdF9mYWRlKCkgKwogIGVhc2VfYWVzKHkgPSAnYm91bmNlLWluLW91dCcpCgphbmltYXRlKHAsIG5mcmFtZXMgPSAgNTApCmBgYAoKV2h5IGRvZXMgdGhpcyBoYXBwZW4/IEJlY2F1c2UgYmVoaW5kIHRoZSBzY2VuZXMgc29tZSBzb3J0IG9mIGdyb3VwaW5nIGlzIGJlaW5nIGRvbmUgb24gdGhlIGRhdGEuIEJ5IHNwZWNpZnlpbmcgdGhlIGNvbG9yIGFyZ3VtZW50LCB3ZSBvbmx5IGhhdmUgdGhlIHR3byBncm91cHMsIHdoaWxlIHdlIHdhbnQgZWFjaCBpbmRpdmlkdWFsIHBvaW50IHRvIGJvdW5jZS4gIElmIHdlIGFkZCBhIGBncm91cCA9IDFgIGFlc3RoZXRpYyBhcyB3ZSBkaWQgdGhlIGZpcnN0IHRpbWUsIHdlIGNhbiBnZXQgd2hhdCB3ZSB3YW50LiBBcyBzdGF0ZWQgaW4gdGhlIGRvY3VtZW50YXRpb24sIHRoZSBncm91cCBhZXN0aGV0aWMgZGVmaW5lcyBob3cgdGhlIGRhdGEgaW4gYSBsYXllciBpcyBtYXRjaGVkIGFjcm9zcyB0aGUgYW5pbWF0aW9uLgoKCmBgYHtyIGZpeGVkX2JvdW5jZX0KcCA9IHBlb3BsZV9kZiAlPiUgCiAgbXV0YXRlKEh1bWFuID0gZmFjdG9yKHNwZWNpZXMgPT0gJ0h1bWFuJywgbGFiZWxzID0gYygnT3RoZXInLCAnSHVtYW4nKSkpICU+JSAKICBmaWx0ZXIoIWlzLm5hKGdlbmRlcikgJiAhZ3JlcGwobmFtZSwgcGF0dGVybiA9ICdKYWJiYScpKSAlPiUgCiAgZHJvcF9uYShIdW1hbiwgbWFzcywgaGVpZ2h0KSAlPiUgIyB0byByZW1vdmUgd2FybmluZ3MKICBnZ3Bsb3QoYWVzKHggPSBtYXNzLCB5ID0gaGVpZ2h0KSkgKyAKICBnZW9tX3BvaW50KGFlcyhjb2xvciA9IEh1bWFuLCBncm91cCA9IDEpLCBzaG93LmxlZ2VuZCA9IFQpCgpwID0gbWFzc19oZWlnaHQgKwogIHRyYW5zaXRpb25fc3RhdGVzKEh1bWFuLCB0cmFuc2l0aW9uX2xlbmd0aCA9IDUsIHN0YXRlX2xlbmd0aCA9IDEpICsKICBlbnRlcl9mYWRlKCkgKwogIGV4aXRfZmFkZSgpICsKICBlYXNlX2Flcyh5ID0gJ2VsYXN0aWMtaW4tb3V0JykKCmFuaW1hdGUocCwgbmZyYW1lcyA9IDUwKQoKYGBgCgoKIyMjIyBXcm9uZyB0cmFuc2l0aW9uIHRvIGNvbnZleSB0aGUgZWZmZWN0CgpUaGUgcHJldmlvdXMgcGxvdCBtYWtlcyBpdCBsb29rIGFzIHRob3VnaCBodW1hbnMgYXJlIHRyYW5zaXRpb25pbmcgdG8vZnJvbSBub24taHVtYW5zLiBJbiB0aGlzIGNhc2UsIGl0IHdvdWxkIGJlIG1vcmUgYXBwcm9wcmlhdGUgdG8gbm90IGhhdmUgc3VjaCBhIHRyYW5zaXRpb24gZWFzZS4gV2UgY2FuIHN0aWxsIHVzZSBvdGhlciBlZmZlY3RzLCBsaWtlIGVudGVyL2V4aXQsIGlmIHdlIGxpa2UuCgpgYGB7ciByaWdodF90cmFuc2l0aW9ufQpwID0gcGVvcGxlX2RmICU+JSAKICBtdXRhdGUoSHVtYW4gPSBmYWN0b3Ioc3BlY2llcyA9PSAnSHVtYW4nLCBsYWJlbHMgPSBjKCdPdGhlcicsICdIdW1hbicpKSkgJT4lIAogIGZpbHRlcighaXMubmEoZ2VuZGVyKSAmICFncmVwbChuYW1lLCBwYXR0ZXJuID0gJ0phYmJhJykpICU+JSAKICBkcm9wX25hKEh1bWFuLCBtYXNzLCBoZWlnaHQpICU+JSAjIHRvIHJlbW92ZSB3YXJuaW5ncwogIGdncGxvdChhZXMoeCA9IG1hc3MsIHkgPSBoZWlnaHQpKSArIAogIGdlb21fcG9pbnQoYWVzKGNvbG9yID0gSHVtYW4sIGdyb3VwID0gSHVtYW4pLCBzaG93LmxlZ2VuZCA9IFQpCgpwID0gcCArCiAgdHJhbnNpdGlvbl9zdGF0ZXMoSHVtYW4sIHRyYW5zaXRpb25fbGVuZ3RoID0gMiwgc3RhdGVfbGVuZ3RoID0gMSkgKyAKICBlbnRlcl9mYWRlKCkgKwogIGV4aXRfZHJpZnQoeF9tb2QgPSAwLCB5X21vZCA9IDEwMCkKCmFuaW1hdGUocCwgbmZyYW1lcyA9IDUwKQpgYGAKCgojIyBTdW1tYXJ5</div>
 
 
 
@@ -1936,17 +2011,6 @@ $(document).ready(function () {
   bootstrapStylePandocTables();
 });
 
-$(document).ready(function () {
-  $('.knitsql-table').addClass('kable-table');
-  var container = $('.kable-table');
-  container.each(function() {
-
-    // move the caption out of the table
-    var table = $(this).children('table');
-    var caption = table.children('caption').detach();
-    caption.insertBefore($(this)).css('display', 'inherit');
-  });
-});
 
 </script>
 
