@@ -73,19 +73,17 @@ box_sw = people_df %>%
 ```
 
 ```{r gm_plots, eval=TRUE}
-load('data/starwars_df.RData')  # load starwars data frames
-
-continent = gapminder %>% 
+continent_df = gapminder %>% 
   group_by(continent) %>% 
   summarise(lifeExp = mean(lifeExp),
             gdpPercap = mean(gdpPercap))
 
-country = gapminder %>% 
+country_df = gapminder %>% 
   group_by(continent, country) %>% 
   summarise(lifeExp = mean(lifeExp),
             gdpPercap = mean(gdpPercap))
 
-year = gapminder %>% 
+year_df = gapminder %>% 
   group_by(year) %>% 
   summarise(lifeExp = mean(lifeExp),
             gdpPercap = mean(gdpPercap))
@@ -116,7 +114,7 @@ scatter = country %>%
   scale_y_continuous(trans = 'log') +
   scale_color_viridis_c()
 
-s = gapminder %>%
+box = gapminder %>%
   group_by(continent, country) %>%
   summarise(lifeExp = mean(lifeExp)) %>%
   ggplot() + 
@@ -127,11 +125,11 @@ s = gapminder %>%
 
 ## A starting point
 
-Note that *all animations will take at least several seconds to produce*.  To reduce this you can change the number of frames used, though this will typically make for a choppier plot. Note that output will be forced to the viewer instead of inline also.
+We start with a simple example to get things going. Note that *all animations will take at least several seconds to produce*.  To reduce this you can change the number of frames used, though this will typically make for a choppier plot. Note that output will be forced to the viewer instead of inline also.
 
 
 ```{r first_animation}
-box + 
+box_sw + 
   transition_states(
     species,
     transition_length = 2,
@@ -165,39 +163,27 @@ animate(p, nframes = 50)
 
 ## Transitions
 
-There are many **transitions**, though you'll probably use `_states` and `_reveal`.  The former works on some categorical variable as we saw before, while the latter works on an ordered (numeric) variable.  A variant of it is `transition_time`, which can work with an actual date variable.  In the following, text will be revealed by release date. 
+There are many **transitions**, though you'll probably use `_states` and `_reveal`.  The former works on some categorical variable as we saw before, while the latter works on an ordered (numeric) variable.  A variant of it is `transition_time`, which can work with an actual date variable.  In the following, we examine life expectancy over time.
 
 ```{r transition_time}
-film_timeline = films_df %>%  
-  ggplot(aes(x = release_date, y = 0)) + 
-  geom_text(aes(label = title, color = title), 
-            position = position_jitter(width = 0.1, height = .1),
-            size = 5,
-            show.legend = F) +
-  labs(y = '') + 
-  theme_bw() +
-  theme(axis.text.y = element_blank()) 
+yr_life_exp = year_df %>%  
+  ggplot(aes(x = year, y = lifeExp, group = 1)) + 
+  geom_point(size = 10, color = '#ff5500') +
+  theme_minimal() 
 
-p = film_timeline + 
-  transition_time(release_date) 
+p = yr_life_exp + 
+  transition_time(year) 
 
 animate(p, end_pause = 25)
 ```
 
-See how this contrasts with `transition_reveal`
 
-```{r reveal_vs_time}
-p = film_timeline + 
-  transition_reveal(release_date) 
-
-animate(p, nframes=50)
-```
 
 We can use the `glue` package to insert text into the titles.  Each type of transition comes with named objects we can use.  With `transition_time`, the unique value is `frame_time`, but others are generically available.
 
 ```{r glue}
-p = film_timeline + 
-  transition_time(release_date) +
+p = yr_life_exp + 
+  transition_time(year)  +
   ggtitle('Now showing {frame_time}',
           subtitle = 'Frame {frame} of {nframes}')
 
@@ -239,20 +225,51 @@ The list of transitions includes:
 
 ## Shadows
 
-Shadows can add a nice effect.
+Shadows can add a nice effect.  The following recreates the famous TED talk, which proved there's no inequality any more.
 
-```{r}
-mass_height = people_df %>% 
-  filter(!is.na(gender) & !grepl(name, pattern = 'Jabba')) %>% 
-  ggplot(aes(x=mass, y=height)) + 
-  # geom_point(aes(color = species == 'Human'), show.legend = F) + 
-  geom_smooth(se = F, color = '#00aaff') 
+```{r shadows}
+p = gapminder %>% 
+  ggplot(aes(x = gdpPercap, y = lifeExp)) + 
+  geom_point(aes(color = country, size = pop), alpha = .25, show.legend = F) +
+  ggtitle('Year: {frame_time}') + 
+  # geom_text(aes(label = country, color = country), 
+  #           alpha = .5, 
+  #           size = 2, 
+  #           hjust = 0,
+  #           vjust = 0,
+  #           show.legend = F) +
+  scale_size_area(max_size = 10) +
+  theme_minimal()
 
-p = mass_height +
-  transition_reveal(seq_along(mass)) 
-
-animate(p, nframes = 50)
+p +
+  transition_time(year) +
+  shadow_trail()
 ```
+
+The following shows the data for just a handful of countries.  We'll use both `shadow_mark` and `shadow_trail`.
+
+```{r shadow_mark}
+p = gapminder_std %>% 
+  filter(country %in% c('China', 'India', 'Norway', 'United States')) %>% 
+  ggplot(aes(x = gdpPercap, y = lifeExp)) + 
+  geom_point(aes(color = country, size = pop), alpha = .25) +
+  ggtitle('Year: {frame_time}') + 
+  scale_size_area(max_size = 10) +
+  guides(size = NULL) +
+  theme_minimal()
+
+p +
+  transition_time(year) +
+  shadow_mark()
+```
+
+
+```{r shadow_trail}
+p +
+  transition_time(year) +
+  shadow_trail()
+```
+
 
 
 ## Enter/Exit
