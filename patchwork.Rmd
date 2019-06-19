@@ -1,11 +1,14 @@
 ---
 title: "Patchwork"
-output: 
-  html_notebook: 
+output:
+  html_document:
+    df_print: paged
+    toc: yes
+  html_notebook:
     highlight: pygments
     theme: sandstone
     toc: yes
-editor_options: 
+editor_options:
   chunk_output_type: inline
 ---
 
