@@ -163,7 +163,7 @@ animate(p_box, nframes = 50)
 
 ## Transitions
 
-There are many **transitions**, though you'll probably use `_states` and `_reveal`.  The former works on some categorical variable as we saw before, while the latter works on an ordered (numeric) variable.  A variant of it is `transition_time`, which can work with an actual date variable.  In the following, we examine life expectancy over time.
+There are many **transitions**, though `_states` and `_reveal` are probably ones you'll use a lot.  The former works on some categorical variable as we saw before, while the latter works on an ordered (numeric) variable.  A variant of it is `transition_time`, which can work with an actual date/time variable.  In the following, we examine life expectancy over time with the gapminder data.  We'll see how to pause the visualization at the end for a specific number of frames.
 
 ```{r transition_time}
 yr_life_exp = year_df %>%  
@@ -179,7 +179,7 @@ animate(p_time, end_pause = 25)
 
 
 
-We can use the `glue` package to insert text into the titles.  Each type of transition comes with named objects we can use.  With `transition_time`, the unique value is `frame_time`, but others are generically available.
+We can use the `glue` package to insert text into the titles.  Each type of transition you create comes with named objects we can use.  With `transition_time`, the unique value is `frame_time`, but others are generically available.  See the corresponding help files for what all is available.
 
 ```{r glue}
 p_glue = yr_life_exp + 
@@ -225,7 +225,7 @@ The list of transitions includes:
 
 ## Shadows
 
-Shadows can add a nice effect to show paths over some index, especially time.  The following recreates the famous TED talk visualization, which attempted to show how much better things were getting.
+Shadows can add a nice effect to show paths over some index, especially time.  The following recreates the famous TED talk visualization, which attempted to show how much better things were getting (if you ignored a lot of other factors).
 
 ```{r shadows}
 p = gapminder %>% 
@@ -241,7 +241,7 @@ p +
   transition_time(year) 
 ```
 
-The following shows the data for just a handful of countries.  We'll use both `shadow_mark` and `shadow_trail`.
+The following shows the data for just a handful of countries.  We'll use both `shadow_mark` and `shadow_trail`.  The former can shadow past vs. future data points, while the latter has additional options for leaving a trail of symbols behind.
 
 ```{r shadow_mark}
 p = gapminder_std %>% 
@@ -261,10 +261,10 @@ p +
 ```{r shadow_trail}
 p +
   transition_time(year) +
-  shadow_trail(distance = .02, alpha = 0.3, shape = 2)
+  shadow_trail(distance = .02, alpha = 0.3, shape = 1)
 ```
 
-Maybe things hadn't changed that much after all for some, relatively speaking.
+Maybe things hadn't changed that much after all for some, relatively speaking, or only improved in one domain.
 
 ## Enter/Exit
 
@@ -276,34 +276,27 @@ box_gap +
   enter_drift() 
 ```
 
+The following might be fun as an exercise to demonstrate `grow/shrink` and, but please don't do this to try and spruce up a boring bar graph.  After running, set the size of `enter_grow` to 1 to see what it changes.
+
 ```{r exit}
 bar_gap + 
   transition_states(continent) +
-  enter_grow() +
-  exit_shrink()
+  enter_grow(size = .5) +
+  exit_shrink(size = .1)
 ```
 
-Here are the options we can play with.  They have a corresponding `exit_*` function.
+Here are the options we can play with.  Each `enter_*` function has a corresponding `exit_*` function.
 
-- `enter_manual`
-- `enter_appear`
-- `enter_fade`
-- `enter_grow`
-- `enter_recolour`
-- `enter_recolor`
-- `enter_fly`
-- `enter_drift`
-- `enter_reset`
+- `enter_manual`, `exit_manual`
+- `enter_appear`, `exit_disappear`
+- `enter_fade`, `exit_fade`
+- `enter_grow`, `exit_shrink`
+- `enter_recolour`, `exit_recolour`
+- `enter_recolor`, `exit_recolor`
+- `enter_fly`, `exit_fly`
+- `enter_drift`, `exit_drift`
+- `enter_reset`, `exit_reset`
 
-- `exit_manual`
-- `exit_disappear`
-- `exit_fade`
-- `exit_shrink`
-- `exit_recolour`
-- `exit_recolor`
-- `exit_fly`
-- `exit_drift`
-- `exit_reset`
 
 
 ## Easing
@@ -311,20 +304,26 @@ Here are the options we can play with.  They have a corresponding `exit_*` funct
 With easing we can define the velocity with which aesthetics change during an animation.  This is done with `ease_aes`.  By default the transition is 'linear', but let's see some others. 
 
 ```{r ease}
-mass_height = people_df %>% 
-  mutate(Human = factor(species == 'Human', labels = c('Other', 'Human'))) %>% 
-  filter(!is.na(gender) & !grepl(name, pattern = 'Jabba')) %>% 
-  drop_na(Human, mass, height) %>% # to remove warnings
-  ggplot(aes(x = mass, y = height)) + 
-  geom_point(aes(color = Human, group = 1), show.legend = T)
+p = gapminder %>% 
+  filter(year %in% c(1962, 2002)) %>% 
+  mutate(year = factor(year)) %>% 
+  ggplot(aes(x = gdpPercap, y = lifeExp)) + 
+  geom_point(aes(color = country, group = 1), alpha = .25, show.legend = F)
 
-mass_height +
-  transition_states(Human, transition_length = 5, state_length = 1) +
+p + 
+  transition_states(year, transition_length = 5, state_length = 1) +
   enter_fade() +
   exit_fade() +
   ease_aes(y = 'bounce-in-out')
 ```
 
+```{r ease2}
+p + 
+  transition_states(year, transition_length = 5, state_length = 1) +
+  enter_fade() +
+  exit_fade() +
+  ease_aes('elastic-in-out')
+```
 
 
 Easing functions:
@@ -337,7 +336,7 @@ Easing functions:
 - `circular` Models a pi/2 circle arc
 - `exponential` Models an exponential function
 - `elastic` Models an elastic release of energy
-- `back` Models a pullback and relase
+- `back` Models a pullback and release
 - `bounce` Models the bouncing of a ball
 
 
@@ -349,35 +348,29 @@ Modifiers
 
 ## Animate options
 
-When using animate, you have some options you'll commonly want to alter that will affect the animation appearance.  Here are the ones you'll probably want to fiddle with most.
+When using `animate`, you have some options you'll commonly want to alter that will affect the animation appearance.  Here are the ones you'll probably want to fiddle with most.
 
 - `nframes`	The number of frames to render (default 100)
-- `fps`	The framerate of the animation in frames/sec (default 10)
+- `fps`	The frame rate of the animation in frames/sec (default 10)
 - `duration`	The length of the animation in seconds (unset by default)
 - `start/end_pause` Number of times to repeat the first and last frame in the animation 
 - `rewind`	Should the animation roll back in the end (default FALSE)
+
 
 ## Common issues
 
 #### Simple breakage
 
-Often you'll just get an error.  This means you'll need to read the documentation correctly, as you likely have not used the correct variable type, and in general have not provided the function what it expects.
+Often you'll just get an error.  This means you'll need to read the documentation closely, as you likely have not used the correct variable type, and in general have not provided the function what it expects.
 
-As an example, let's try to use `transition_reveal` for a categorical.
+As an example, let's try to use `transition_reveal` for a categorical variable.
 
 ```{r borked, error=TRUE}
-mass_height = people_df %>% 
-  mutate(Human = factor(species == 'Human', labels = c('Other', 'Human'))) %>% 
-  filter(!is.na(gender) & !grepl(name, pattern = 'Jabba')) %>% 
-  drop_na(Human, mass, height) %>% # to remove warnings
-  ggplot(aes(x = mass, y = height)) + 
-  geom_point(aes(color = Human), show.legend = T)
-
-mass_height + 
-  transition_reveal(Human)
+box_gap + 
+  transition_reveal(continent)
 ```
 
-It states clearly what's needed for this transition, and we didn't provide it.
+It states clearly what's needed for this transition, and we didn't provide it.  We can change to `transition_states` for example.
 
 
 
@@ -386,21 +379,23 @@ It states clearly what's needed for this transition, and we didn't provide it.
 Sometimes what *should* work apparently does not.  For example look at the following, which is our easing example from before.  This time, no bounce!
 
 ```{r broken_bounce}
-people_df %>% 
+p = people_df %>% 
   mutate(Human = factor(species == 'Human', labels = c('Other', 'Human'))) %>% 
   filter(!is.na(gender) & !grepl(name, pattern = 'Jabba')) %>% 
   drop_na(Human, mass, height) %>% # to remove warnings
   ggplot(aes(x = mass, y = height)) + 
   geom_point(aes(color = Human), show.legend = T)
 
-mass_height +
-  transition_states(Human, transition_length = 5, state_length = 1) +
+p +
+  transition_states(Human, 
+                    transition_length = 5, 
+                    state_length = 1) +
   enter_fade() +
   exit_fade() +
   ease_aes(y = 'bounce-in-out')
 ```
 
-Why does this happen? Because behind the scenes some sort of grouping is being done on the data. By specifying the color argument, we only have the two groups, while we want each individual point to bounce.  If we add a `group = 1` aesthetic as we did the first time, we can get what we want. As stated in the documentation, the group aesthetic defines how the data in a layer is matched across the animation.
+The variables Why does this happen? Because behind the scenes some sort of grouping is being done on the data. By specifying the color argument, we only have the two groups, while we want each individual point to bounce.  If we add a `group = 1` aesthetic for `geom_point` as we did the first time, we can get what we want. As stated in the documentation, the group aesthetic defines how the data in a layer is matched across the animation.
 
 
 ```{r fixed_bounce}
@@ -409,7 +404,7 @@ p = people_df %>%
   filter(!is.na(gender) & !grepl(name, pattern = 'Jabba')) %>% 
   drop_na(Human, mass, height) %>% # to remove warnings
   ggplot(aes(x = mass, y = height)) + 
-  geom_point(aes(color = Human, group = 1), show.legend = T)
+  geom_point(aes(color = Human, group = 1), show.legend = T)  # change made here
 
 p +
   transition_states(Human, transition_length = 5, state_length = 1) +
@@ -438,10 +433,10 @@ p +
 ```
 
 
-### R Markdown
+#### R Markdown
 
 You may find a number of issues arise when using the animations in R Markdown, especially with non-default device settings, and even if it runs fine with the chunk code. It may be easiest to save the plot and load the file instead.
 
 ## Summary
 
-Animation is a great way to enhance a plot and tell a data driven story.  It can definitely be overkill for many situations though, and so should be used with caution.
+Animation is a great way to enhance a plot and tell a data driven story.  It can definitely be overkill for many situations though, and so should be used with caution.  With the right approach though, you can take your visualizations further, and have some fun doing it too!
