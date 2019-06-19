@@ -1,14 +1,14 @@
 ---
 title: "gganimate"
 output:
-  html_notebook:
-    highlight: pygments
-    theme: sandstone
-    toc: yes
   html_document:
     highlight: pygments
     theme: sandstone
     df_print: paged
+    toc: yes
+  html_notebook:
+    highlight: pygments
+    theme: sandstone
     toc: yes
 editor_options:
   chunk_output_type: console
@@ -18,21 +18,22 @@ editor_options:
 # options for the knitted html document
 knitr::opts_chunk$set(
   echo = T,
-  eval = F,
+  eval = T,
   message = F,
   warning = F,
   comment = NA,
   R.options = list(width = 120),
   cache.rebuild = F,
-  cache = F,
+  cache = T,
+  gganimate = list(nframes = 50),
   fig.align = 'center',
   fig.asp = .7,
-  dev = 'svg',
-  dev.args = list(bg = 'transparent')
+  dev = 'png'   # need png for gganimate renderer
+  # dev.args = list(bg = 'transparent')  # this will make some themes look bad
 )
 ```
 
-```{r packages, eval=TRUE}
+```{r packages, cache=FALSE}
 # Packages you need
 library(tidyverse); library(gganimate)
 
@@ -93,20 +94,20 @@ gapminder_std = gapminder %>%
   mutate(lifeExp = scale(lifeExp)[,1],
          gdpPercap = scale(gdpPercap)[,1]) 
 
-bar = gapminder %>% 
+bar_gap = gapminder %>% 
   group_by(continent) %>% 
   summarise(lifeExp = mean(lifeExp)) %>% 
   ggplot() + 
   geom_col(aes(x = continent, y = lifeExp, fill = continent), show.legend = F)
 
-smooth = gapminder %>% 
+smooth_gap = gapminder %>% 
   ggplot(aes(x = gdpPercap, y = lifeExp)) + 
   geom_point() + 
   geom_smooth() +
   scale_x_continuous(trans = 'log') +
   scale_y_continuous(trans = 'log') 
 
-scatter = country %>% 
+scatter_gap = country_df %>% 
   ggplot(aes(x = gdpPercap, y = lifeExp)) + 
   geom_point(aes(color = gdpPercap*lifeExp), show.legend = F) +
   geom_text_repel(aes(label = country), size=2) +
@@ -114,13 +115,12 @@ scatter = country %>%
   scale_y_continuous(trans = 'log') +
   scale_color_viridis_c()
 
-box = gapminder %>%
+box_gap = gapminder %>%
   group_by(continent, country) %>%
   summarise(lifeExp = mean(lifeExp)) %>%
   ggplot() + 
   geom_boxplot(aes(x = continent, y = lifeExp, fill = continent), show.legend = F)
 ```
-
 
 
 ## A starting point
@@ -145,18 +145,18 @@ To see what's going on, let's take it step by step. The `transition_states` func
 
 Typically you may want to assign the plot to an object so that you can use the `animate` function for more control.
 
-```{r box1}
-p = box + 
+```{r box, eval=F}
+p_box = box_sw + 
   transition_states(
     species,
-    transition_length = c(1, 10, 5), 
-    state_length = 2
+    transition_length = 2,
+    state_length = 1
   ) +
   enter_fade() + 
   exit_shrink() +
   ease_aes('sine-in-out')
 
-animate(p, nframes = 50)
+animate(p_box, nframes = 50)
 ```
 
 
@@ -171,10 +171,10 @@ yr_life_exp = year_df %>%
   geom_point(size = 10, color = '#ff5500') +
   theme_minimal() 
 
-p = yr_life_exp + 
+p_time = yr_life_exp + 
   transition_time(year) 
 
-animate(p, end_pause = 25)
+animate(p_time, end_pause = 25)
 ```
 
 
@@ -182,12 +182,12 @@ animate(p, end_pause = 25)
 We can use the `glue` package to insert text into the titles.  Each type of transition comes with named objects we can use.  With `transition_time`, the unique value is `frame_time`, but others are generically available.
 
 ```{r glue}
-p = yr_life_exp + 
+p_glue = yr_life_exp + 
   transition_time(year)  +
   ggtitle('Now showing {frame_time}',
           subtitle = 'Frame {frame} of {nframes}')
 
-animate(p, nframes=50)
+animate(p_glue, nframes=50)
 ```
 
 
@@ -225,25 +225,20 @@ The list of transitions includes:
 
 ## Shadows
 
-Shadows can add a nice effect.  The following recreates the famous TED talk, which proved there's no inequality any more.
+Shadows can add a nice effect to show paths over some index, especially time.  The following recreates the famous TED talk visualization, which attempted to show how much better things were getting.
 
 ```{r shadows}
 p = gapminder %>% 
   ggplot(aes(x = gdpPercap, y = lifeExp)) + 
   geom_point(aes(color = country, size = pop), alpha = .25, show.legend = F) +
   ggtitle('Year: {frame_time}') + 
-  # geom_text(aes(label = country, color = country), 
-  #           alpha = .5, 
-  #           size = 2, 
-  #           hjust = 0,
-  #           vjust = 0,
-  #           show.legend = F) +
-  scale_size_area(max_size = 10) +
+  scale_size(guide = F) +
+  scale_x_continuous(trans = 'log') +
+  scale_y_continuous(trans = 'log', breaks = seq(30, 80, by = 10)) +
   theme_minimal()
 
 p +
-  transition_time(year) +
-  shadow_trail()
+  transition_time(year) 
 ```
 
 The following shows the data for just a handful of countries.  We'll use both `shadow_mark` and `shadow_trail`.
@@ -254,8 +249,7 @@ p = gapminder_std %>%
   ggplot(aes(x = gdpPercap, y = lifeExp)) + 
   geom_point(aes(color = country, size = pop), alpha = .25) +
   ggtitle('Year: {frame_time}') + 
-  scale_size_area(max_size = 10) +
-  guides(size = NULL) +
+  scale_size(guide = F) +
   theme_minimal()
 
 p +
@@ -267,34 +261,26 @@ p +
 ```{r shadow_trail}
 p +
   transition_time(year) +
-  shadow_trail()
+  shadow_trail(distance = .02, alpha = 0.3, shape = 2)
 ```
 
-
+Maybe things hadn't changed that much after all for some, relatively speaking.
 
 ## Enter/Exit
 
 We have many options for how the plots enter and leave the space.  In the following, we use `enter_drift` to let the previous plot linger a bit.
 
 ```{r enter}
-p = box + 
-  transition_states(
-    species
-  ) +
+box_gap + 
+  transition_states(continent) +
   enter_drift() 
-
-anim(p, nframes = 50)
 ```
 
 ```{r exit}
-p = bar + 
-  transition_states(
-    homeworld
-  ) +
+bar_gap + 
+  transition_states(continent) +
   enter_grow() +
   exit_shrink()
-
-animate(p, nframes = 50)
 ```
 
 Here are the options we can play with.  They have a corresponding `exit_*` function.
@@ -332,13 +318,11 @@ mass_height = people_df %>%
   ggplot(aes(x = mass, y = height)) + 
   geom_point(aes(color = Human, group = 1), show.legend = T)
 
-p = mass_height +
+mass_height +
   transition_states(Human, transition_length = 5, state_length = 1) +
   enter_fade() +
   exit_fade() +
   ease_aes(y = 'bounce-in-out')
-
-animate(p, nframes =  50)
 ```
 
 
@@ -409,13 +393,11 @@ people_df %>%
   ggplot(aes(x = mass, y = height)) + 
   geom_point(aes(color = Human), show.legend = T)
 
-p = mass_height +
+mass_height +
   transition_states(Human, transition_length = 5, state_length = 1) +
   enter_fade() +
   exit_fade() +
   ease_aes(y = 'bounce-in-out')
-
-animate(p, nframes =  50)
 ```
 
 Why does this happen? Because behind the scenes some sort of grouping is being done on the data. By specifying the color argument, we only have the two groups, while we want each individual point to bounce.  If we add a `group = 1` aesthetic as we did the first time, we can get what we want. As stated in the documentation, the group aesthetic defines how the data in a layer is matched across the animation.
@@ -429,14 +411,11 @@ p = people_df %>%
   ggplot(aes(x = mass, y = height)) + 
   geom_point(aes(color = Human, group = 1), show.legend = T)
 
-p = mass_height +
+p +
   transition_states(Human, transition_length = 5, state_length = 1) +
   enter_fade() +
   exit_fade() +
   ease_aes(y = 'elastic-in-out')
-
-animate(p, nframes = 50)
-
 ```
 
 
@@ -452,15 +431,17 @@ p = people_df %>%
   ggplot(aes(x = mass, y = height)) + 
   geom_point(aes(color = Human, group = Human), show.legend = T)
 
-p = p +
+p +
   transition_states(Human, transition_length = 2, state_length = 1) + 
   enter_fade() +
   exit_drift(x_mod = 0, y_mod = 100)
-
-animate(p, nframes = 50)
 ```
 
 
+### R Markdown
+
+You may find a number of issues arise when using the animations in R Markdown, especially with non-default device settings, and even if it runs fine with the chunk code. It may be easiest to save the plot and load the file instead.
+
 ## Summary
 
-Animation is a great way to enhance a plot and tell a data driven story.  It can definitely be overkill for sm
+Animation is a great way to enhance a plot and tell a data driven story.  It can definitely be overkill for many situations though, and so should be used with caution.
