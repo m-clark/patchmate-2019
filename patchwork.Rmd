@@ -2,6 +2,8 @@
 title: "Patchwork"
 output:
   html_document:
+    highlight: pygments
+    theme: sandstone
     df_print: paged
     toc: yes
   html_notebook:
@@ -29,13 +31,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r packages}
-# Packages you need
-library(tidyverse); library(patchwork)
 
-# Packages you may not have and can install
-library(ggrepel)
-```
 
 
 ## Getting started
@@ -45,12 +41,26 @@ library(ggrepel)
 `Patchwork` is not yet available on CRAN. You'll need to install it as follows.
 
 ```{r install}
-# install.packages("devtools")
+# install.packages("devtools")   # if you don't have devtools
 # devtools::install_github("thomasp85/patchwork")
 ```
 
+### Other packages
+
+These packages should be enough for our purposes.
+
+```{r packages}
+# Packages you need
+library(tidyverse); library(patchwork)
+
+# Packages you may not have and can install
+library(ggrepel)
+```
 
 
+## Demo plots
+
+Here are a couple plots that will serve as a basis for some examples or can just give you a ready ggplot object to do your own exploration.
 
 ```{r basic_plots}
 load('data/starwars_df.RData')  # load starwars data frames
@@ -69,8 +79,8 @@ smooth = people_df %>%
 
 scatter = vehicles_df %>% 
   ggplot(aes(x=length, y=cost_in_credits)) + 
-  geom_point(size = 10, color = '#ff5500') +
-  geom_text_repel(aes(label = name), size=6, color = 'gray50')  # requires ggrepel
+  geom_point(size = 5, color = '#ff5500') +
+  geom_text_repel(aes(label = name), size=2, color = 'gray50')  # requires ggrepel
 
 box = people_df %>% 
   mutate(species = fct_lump(species, n = 2)) %>% 
@@ -78,6 +88,7 @@ box = people_df %>%
   ggplot(aes(x= species, y = mass)) +
   geom_boxplot()
 ```
+
 
 ## Above & Below
 
@@ -126,6 +137,7 @@ bar / {
     }
   }
 ```
+
 
 ## Layout
 
@@ -188,6 +200,7 @@ box +
   plot_spacer() +
   smooth 
 ```
+
 ### Applying modifications to all plots
 
 You may have some layouts or themes you'd like to apply to each plot.  First we'll start with the usual approach.
@@ -242,3 +255,6 @@ Annotating applies only on the 'top-level' plot.
                   theme = theme(title = element_text(size= 24))) 
 ```
 
+## Summary
+
+The `patchwork` package provides the easiest way yet to stitch multiple plots together to create the visual story you want to convey.  More development will come, so keep an eye on it!

@@ -33,6 +33,20 @@ knitr::opts_chunk$set(
 )
 ```
 
+## Getting started
+
+### Installation
+
+You'll need to install `gganimate` as follows.
+
+```{r install, eval=FALSE}
+install.packages("gganimate")
+```
+
+### Other packages
+
+These packages should be enough for our purposes.
+
 ```{r packages, cache=FALSE}
 # Packages you need
 library(tidyverse); library(gganimate)
@@ -41,6 +55,11 @@ library(tidyverse); library(gganimate)
 library(ggrepel)
 library(gapminder)
 ```
+
+
+### Demo plots
+
+Here are a couple plots that will serve as a basis for some examples, or can just give you a ready ggplot object to do your own exploration.
 
 ```{r sw_plots, eval=TRUE}
 load('data/starwars_df.RData')  # load starwars data frames
@@ -223,6 +242,7 @@ The list of transitions includes:
 - `transition_states`
 - `transition_time`
 
+
 ## Shadows
 
 Shadows can add a nice effect to show paths over some index, especially time.  The following recreates the famous TED talk visualization, which attempted to show how much better things were getting (if you ignored a lot of other factors).
@@ -266,6 +286,7 @@ p +
 
 Maybe things hadn't changed that much after all for some, relatively speaking, or only improved in one domain.
 
+
 ## Enter/Exit
 
 We have many options for how the plots enter and leave the space.  In the following, we use `enter_drift` to let the previous plot linger a bit.
@@ -296,7 +317,6 @@ Here are the options we can play with.  Each `enter_*` function has a correspond
 - `enter_fly`, `exit_fly`
 - `enter_drift`, `exit_drift`
 - `enter_reset`, `exit_reset`
-
 
 
 ## Easing
@@ -346,6 +366,7 @@ Modifiers
 -`out` The easing function is applied in reverse
 -`in-out` The first half of the transition it is applied as-is, while in the last half it is reversed
 
+
 ## Animate options
 
 When using `animate`, you have some options you'll commonly want to alter that will affect the animation appearance.  Here are the ones you'll probably want to fiddle with most.
@@ -371,7 +392,6 @@ box_gap +
 ```
 
 It states clearly what's needed for this transition, and we didn't provide it.  We can change to `transition_states` for example.
-
 
 
 #### But it worked before!
@@ -436,6 +456,7 @@ p +
 #### R Markdown
 
 You may find a number of issues arise when using the animations in R Markdown, especially with non-default device settings, and even if it runs fine with the chunk code. It may be easiest to save the plot and load the file instead.
+
 
 ## Summary
 
